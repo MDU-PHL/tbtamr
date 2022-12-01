@@ -112,6 +112,7 @@ def set_parsers():
         '-i',
         help="Isolate ID or file containing list of isolates (one per line) to collate."
     )
+    
 
     parser_sub_run.set_defaults(func=run_pipeline)
     parser_sub_collate.set_defaults(func = collate_results)

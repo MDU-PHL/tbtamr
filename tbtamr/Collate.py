@@ -16,8 +16,10 @@ class Parse(Tbtamr):
     
     def _fail_isolate_dict(self,seq_id, step):
 
-        logger.critical(f"Files for the tb-profiler {step} for sample {seq_id} are missing. Please try again")
-        raise SystemExit
+        logger.warning(f"Files for the tb-profiler {step} for sample {seq_id} are missing.")
+        if step == 'collate':
+            logger.critical(f"Will now exit - please check your inputs and try again. You should have files called '{seq_id}/tb-profiler_report.json' at a minimum to proceed with the collation step.")
+            raise SystemExit
 
     def _get_isolate_dict(self, isos):
         # pass
@@ -29,7 +31,7 @@ class Parse(Tbtamr):
             pr = self._check_output_file(seq_id=i, step='profile')
             isolates[i]['profile'] = pr if pr else self._fail_isolate_dict(seq_id = i,step = 'profile')
             cr = self._check_output_file(seq_id=i, step='collate')
-            isolates[i]['collate'] = cr if pr else self._fail_isolate_dict(seq_id = i,step = 'collate')
+            isolates[i]['collate'] = cr if cr else self._fail_isolate_dict(seq_id = i,step = 'collate')
         
         return isolates
 
@@ -84,7 +86,10 @@ class Inferrence(Tbtamr):
             "clofazimine":"Clofazimine",
             "delamanid":"Delamanid",
             "bedaquiline":"Bedaquiline",
-            "linezolid":"Linezolid"
+            "linezolid":"Linezolid",
+            "kanamycin":"Kanamycin",
+            "streptomycin":"Streptomycin",
+            "capreomycin":"Capreomycin"
         }
 
         return drugs
@@ -107,7 +112,10 @@ class Inferrence(Tbtamr):
                 'clofazimine': self._other_drugs,
                 'delamanid':self._other_drugs,
                 'bedaquiline':self._other_drugs,
-                'linezolid':self._other_drugs
+                'linezolid':self._other_drugs,
+                'kanamycin':self._other_drugs,
+                'streptomycin':self._other_drugs,
+                'capreomycin':self._other_drugs
                 }
 
         return funcs
@@ -155,6 +163,9 @@ class Inferrence(Tbtamr):
             "Amikacin",
             "Cycloserine",
             "Ethionamide",
+            "Kanamycin",
+            "Streptomycin",
+            "Capreomycin",
             "Para-aminosalicylic acid",
             "Clofazimine",
             "Delamanid",
@@ -200,7 +211,8 @@ class Inferrence(Tbtamr):
             'rpoB_p.Thr400Ala',
             'rpoB_p.Gly332Arg'
             ]
-        rif_borderline = ["rpoB_p.Leu430Pro","rpoB_p.His445Asn"]
+        rif_borderline = ["rpoB_p.Leu430Pro","rpoB_p.His445Asn","rpoB_p.Asp435Tyr",
+                      "rpoB_p.Leu452Pro","p.Ile491Phe"]
 #     print(x)
         if res == '-':
             return 'No mechanism identified'
@@ -301,44 +313,54 @@ class Inferrence(Tbtamr):
     
     def _infer_dr_profile(self, res):
         
-        fline_a = ['rifampicin','isoniazid']
+        # fline_a = ['rifampicin','isoniazid']
         fline_b = ['pyrazinamide','ethambutol']
         flq = ['ofloxacin','moxifloxacin','levofloxacin']
-        sline = ["amikacin","capreomycin","kanamycin","streptomycin"]
+        other_groupA = ["bedaquiline",	"linezolid","delamanid"]
         score = 0
-        fline_score = 1
-        rif_inh = 3
+        other_score = False
         flq_score = False
-        sline_score = False
+        inh = 3
+        rif = 8
+        fline_score = 1
+        rf = ''
+        
         suff = ""
         for drug in self.drugs:
             if 'No mechanism identified' not in res[self.drugs[drug]]:
                 if drug in flq:
                     flq_score = True
-                elif drug in sline:
-                    sline_score = True
-                elif drug in fline_a:
-                    score = score + rif_inh
+                if drug in other_groupA:
+                    other_score = True
+                if drug == 'rifampicin':
+                    rf = ' (RR-TB)'
+                    score = score + rif
+                elif drug == 'isoniazid':
+                    score = score + inh
                 elif drug in fline_b:
                     score = score + fline_score
+                
             if "*" in res[self.drugs[drug]] : #if there are any intermediate resistance mechanims identified add a *
                 suff = f"{suff}*"
             elif "^" in res[self.drugs[drug]]: # if there are any missing
                 suff = f"{suff}^"
-            
+        print(f"this sample has a score of {score}, flq is {flq_score} and other is {other_score}") 
         resistance = 'No drug resistance predicted'
-        if score == 1 or score == 3: # one first line drug
-            resistance = 'Mono-resistance predicted'
-        elif score == 2 or score in range(4,6): # more than one first line drug where INH OR RIF can be present
-            resistance = 'Poly-resistance predicted'
-        elif score in range(6,9): # RIF and INH +/- PZA or EMB
-            if flq and sline: # there are mutations in a FLQ and amikacin,capreomycin,kanamycin
-                resistance = 'Pre-Extensive drug-resistance predicted'
-            else:
-                resistance = 'Multi-drug resistance predicted'
+        if score >=8 and flq_score == True and other_score == False:
+            resistance = 'Pre-Extensive/Extensive drug-resistance predicted'
+        elif score >=8 and flq_score == True and other_score == True:
+            resistance = 'Pre-Extensive/Extensive drug-resistance predicted'
+        elif score in [1,3,8]: # one first line drug
+            resistance = f'Mono-resistance predicted{rf}'
+        elif score in [2,4,5,9,10]: # more than one first line drug where INH OR RIF can be present
+            resistance = f'Poly-resistance predicted{rf}'
+        elif score >=11 and flq_score == False and other_score == False:
+            resistance = 'Multi-drug resistance predicted (MDR-TB)'
+        
+                       
 
         res['Predicted drug resistance'] = f"{resistance}{suff}"
-
+        
         return res
 
     def _species(self,res, seq_id):
@@ -365,8 +387,10 @@ class Inferrence(Tbtamr):
             return res[seq_id]['main_lin'].replace('lineage', 'Lineage ')
 
     def _db_version(self, res):
-
-        return f"{res['db_version']['name']}_{res['db_version']['commit']}"
+        try:
+            return f"{res['db_version']['name']}_{res['db_version']['commit']}"
+        except:
+            return f"No database version available"
     
     def _get_qc_feature(self,seq_id, res, val):
 
@@ -380,10 +404,12 @@ class Inferrence(Tbtamr):
         for isolate in self.isolates:
             logger.info(f"Working on {isolate}")
             for_collate = self._check_output_file(seq_id=isolate, step = 'collate')
+            # print(for_collate)
             if for_collate:
                 tbp_result = self._open_json(path = self.isolates[isolate]['collate'])
                 raw_result = self._open_json(path = self.isolates[isolate]['profile'])
                 _dict = self._infer_drugs(tbp_result = tbp_result,seq_id=isolate)
+                # print(_dict)
                 _dict = self._infer_dr_profile(res = _dict)
                 _dict['Species'] = self._species(res = tbp_result, seq_id=isolate)
                 _dict['Phylogenetic lineage'] = self._lineage(res = tbp_result, seq_id=isolate)

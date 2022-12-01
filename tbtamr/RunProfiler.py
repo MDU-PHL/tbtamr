@@ -72,11 +72,11 @@ class RunProfiler(Tbtamr):
         self._run_cmd(cmd=cmd)
 
     def _single_cmd(self, input_data):
-        cmd = f"tb-profiler profile --read1 {input_data['R1']} --read2 {input_data['R2']} {self.database} --prefix {input_data['Seq_ID']} --dir {input_data['Seq_ID']} --no_trim --call_whole_genome --threads {self.jobs} >> {input_data['Seq_ID']}/tbprofiler.log 2>&1"
+        cmd = f"tb-profiler profile --read1 {input_data['R1']} --read2 {input_data['R2']} {self.database} --prefix {input_data['Seq_ID']} --dir {input_data['Seq_ID']} --min_depth 20 --no_trim --call_whole_genome --threads {self.jobs} >> {input_data['Seq_ID']}/tbprofiler.log 2>&1"
         return cmd
 
     def _batch_cmd(self, input_data):
-        cmd = f"parallel --colsep '\\t' -j {self.jobs} 'tb-profiler profile --read1 {{2}} --read2 {{3}} {self.database} --prefix {{1}} --dir {{1}} --no_trim --call_whole_genome --threads 1  >> {{1}}/tbprofiler.log 2>&1' :::: {input_data}"
+        cmd = f"parallel --colsep '\\t' -j {self.jobs} 'tb-profiler profile --read1 {{2}} --read2 {{3}} {self.database} --prefix {{1}} --dir {{1}} --min_depth 20 --no_trim --call_whole_genome --threads 1  >> {{1}}/tbprofiler.log 2>&1' :::: {input_data}"
         return cmd
 
     def _single_collate(self, input_data):
@@ -90,10 +90,8 @@ class RunProfiler(Tbtamr):
     def _check_tbprofiler(self):
         version_pat_3 = re.compile(r'\bv?(?P<major>[0-9]+)\.(?P<minor>[0-9]+)(?:\.(?P<release>[0-9]+)*)?(?:\.(?P<build>[0-9]+)*)?\b')
         p = subprocess.run(f"tb-profiler version", capture_output=True, encoding = "utf-8", shell = True)
-        print(p)
         p = p.stdout
         v = version_pat_3.search(p.strip())
-        print(v)
         if v:
             v = v.group(0)
             logger.info(f"TB Profiler version {v} detected.")    
