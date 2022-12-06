@@ -747,7 +747,7 @@ gid,p.Trp148*,streptomycin,resistance,,WHO List,Assoc w R - Interim,Moderate,str
 gid,p.Trp45*,streptomycin,resistance,,WHO List,Assoc w R - Interim,Moderate,streptomycin_gid_p.Trp45*
 gid,p.Tyr195*,streptomycin,resistance,,WHO List,Assoc w R - Interim,Moderate,streptomycin_gid_p.Tyr195*
 inhA,c.-154G>A,ethionamide,resistance,,,Uncertain significance,Unconfirmed,ethionamide_inhA_c.-154G>A
-inhA,c.-154G>A,isoniazid,resistance,,WHO List,combo,combo,isoniazid_inhA_c.-154G>A
+inhA,c.-154G>A,isoniazid,combo-resistance,,WHO List,combo,combo,isoniazid_inhA_c.-154G>A
 katG,c.2003_2005dupGGG,isoniazid,resistance,,,Uncertain significance,Unconfirmed,isoniazid_katG_c.2003_2005dupGGG
 pncA,c.303_314delAGCGTACAGCGG,pyrazinamide,resistance,,,Uncertain significance,Unconfirmed,pyrazinamide_pncA_c.303_314delAGCGTACAGCGG
 pncA,c.36_37insGCCAGCGAGCCACCCTCGCAGAAGTCG,pyrazinamide,resistance,,,Uncertain significance,Unconfirmed,pyrazinamide_pncA_c.36_37insGCCAGCGAGCCACCCTCGCAGAAGTCG
@@ -775,8 +775,7 @@ pncA,p.Thr160Ala,pyrazinamide,resistance,,WHO List,Uncertain significance,Unconf
 gid,p.Gly73Ala,streptomycin,resistance,,WHO List,Assoc w R - Interim,Moderate,streptomycin_gid_p.Gly73Ala
 gid,p.Leu79Ser,streptomycin,resistance,,WHO List,Uncertain significance,Unconfirmed,streptomycin_gid_p.Leu79Ser
 gid,p.Leu108Arg,streptomycin,resistance,,WHO List,Uncertain significance,Unconfirmed,streptomycin_gid_p.Leu108Arg
-ahpC,c.-57C>T,isoniazid,resistance,,WHO List,Uncertain significance,Unconfirmed,isoniazid_ahpC_c.-57C>T
-ahpC,c.-57C>T,isoniazid,resistance,,WHO List,combo,combo,isoniazid_ahpC_c.-57C>T
+ahpC,c.-57C>T,isoniazid,combo-resistance,,WHO List,Uncertain significance,Unconfirmed,isoniazid_ahpC_c.-57C>T
 ddn,p.Gly81Asp,delamanid,resistance,,,Uncertain significance,Unconfirmed,delamanid_ddn_p.Gly81Asp
 rpoB,p.His445Tyr,rifampicin,resistance,,WHO List,Assoc w R,High,rifampicin_rpoB_p.His445Tyr
 rpoB,p.His445Leu,rifampicin,resistance,,WHO List,Assoc w R,High,rifampicin_rpoB_p.His445Leu
@@ -915,8 +914,7 @@ alr,p.Phe4Leu,cycloserine,resistance,,,Uncertain significance,Unconfirmed,cyclos
 fbiA,p.Asp49Tyr,delamanid,resistance,,,Uncertain significance,Unconfirmed,delamanid_fbiA_p.Asp49Tyr
 embA,c.-11C>A,ethambutol,resistance,,WHO List,Uncertain significance,Unconfirmed,ethambutol_embA_c.-11C>A
 embA,c.-12C>T,ethambutol,resistance,,WHO List,Assoc w R,High,ethambutol_embA_c.-12C>T
-embA,c.-16C>G,ethambutol,resistance,,WHO List,Uncertain significance,Unconfirmed,ethambutol_embA_c.-16C>G
-embA,c.-16C>G,ethambutol,resistance,,WHO List,combo,combo,ethambutol_embA_c.-16C>G
+embA,c.-16C>G,ethambutol,combo-resistance,,WHO List,Uncertain significance,Unconfirmed,ethambutol_embA_c.-16C>G
 embA,c.-16C>T,ethambutol,resistance,,WHO List,Uncertain significance,Unconfirmed,ethambutol_embA_c.-16C>T
 embA,c.27delT,ethambutol,resistance,,,Uncertain significance,Unconfirmed,ethambutol_embA_c.27delT
 embA,c.29delA,ethambutol,resistance,,,Uncertain significance,Unconfirmed,ethambutol_embA_c.29delA
@@ -1113,8 +1111,7 @@ ethA,c.1164_1165insA,ethionamide,resistance,,,Uncertain significance,Unconfirmed
 ethA,c.119_120insA,ethionamide,resistance,,,Uncertain significance,Unconfirmed,ethionamide_ethA_c.119_120insA
 ethA,c.1194_1195insT,ethionamide,resistance,,,Uncertain significance,Unconfirmed,ethionamide_ethA_c.1194_1195insT
 ethA,c.1195_1196insGTG,ethionamide,resistance,,,Uncertain significance,Unconfirmed,ethionamide_ethA_c.1195_1196insGTG
-ethA,c.-11A>G,ethionamide,resistance,,WHO List,Uncertain significance,Unconfirmed,ethionamide_ethA_c.-11A>G
-ethA,c.-11A>G,ethionamide,resistance,,WHO List,combo,combo,ethionamide_ethA_c.-11A>G
+ethA,c.-11A>G,ethionamide,combo-resistance,,WHO List,Uncertain significance,Unconfirmed,ethionamide_ethA_c.-11A>G
 ethA,c.1215_1224delGTTGAATTAC,ethionamide,resistance,,,Uncertain significance,Unconfirmed,ethionamide_ethA_c.1215_1224delGTTGAATTAC
 ethA,c.1242delT,ethionamide,resistance,,,Uncertain significance,Unconfirmed,ethionamide_ethA_c.1242delT
 ethA,c.1290delC,ethionamide,resistance,,,Uncertain significance,Unconfirmed,ethionamide_ethA_c.1290delC
@@ -1148,9 +1145,7 @@ ethA,c.896delG,ethionamide,resistance,,,Uncertain significance,Unconfirmed,ethio
 ethA,frameshift,ethionamide,resistance,,,Uncertain significance,Unconfirmed,ethionamide_ethA_frameshift
 ethA,large_deletion,ethionamide,resistance,,,Uncertain significance,Unconfirmed,ethionamide_ethA_large_deletion
 ethA,transcript_ablation,ethionamide,resistance,,,Uncertain significance,Unconfirmed,ethionamide_ethA_transcript_ablation
-ethA,p.Ala381Pro,ethionamide,resistance,,WHO List,Uncertain significance,Unconfirmed,ethionamide_ethA_p.Ala381Pro
-ethA,p.Ala381Pro,ethionamide,resistance,,WHO List,combo,combo,ethionamide_ethA_p.Ala381Pro
-ethA,p.Ala381Pro,ethionamide,resistance,,WHO List,combo,combo,ethionamide_ethA_p.Ala381Pro
+ethA,p.Ala381Pro,ethionamide,combo-resistance,,WHO List,Uncertain significance,Unconfirmed,ethionamide_ethA_p.Ala381Pro
 ethA,p.Arg463Ser,ethionamide,resistance,,,Uncertain significance,Unconfirmed,ethionamide_ethA_p.Arg463Ser
 ethA,p.Asp58Ala,ethionamide,resistance,,WHO List,Uncertain significance,Unconfirmed,ethionamide_ethA_p.Asp58Ala
 ethA,p.Cys403Gly,ethionamide,resistance,,WHO List,Uncertain significance,Unconfirmed,ethionamide_ethA_p.Cys403Gly
@@ -1236,26 +1231,20 @@ gyrB,p.Val670Phe,fluoroquinolones,resistance,,,Uncertain significance,Unconfirme
 ahpC,c.-20C>T,isoniazid,resistance,,,Uncertain significance,Unconfirmed,isoniazid_ahpC_c.-20C>T
 ahpC,c.-39C>T,isoniazid,resistance,,,Uncertain significance,Unconfirmed,isoniazid_ahpC_c.-39C>T
 ahpC,c.-44T>A,isoniazid,resistance,,,Uncertain significance,Unconfirmed,isoniazid_ahpC_c.-44T>A
-ahpC,c.-48G>A,isoniazid,resistance,,WHO List,Uncertain significance,Unconfirmed,isoniazid_ahpC_c.-48G>A
-ahpC,c.-48G>A,isoniazid,resistance,,WHO List,combo,combo,isoniazid_ahpC_c.-48G>A
+ahpC,c.-48G>A,isoniazid,combo-resistance,,WHO List,Uncertain significance,Unconfirmed,isoniazid_ahpC_c.-48G>A
 ahpC,c.-48G>T,isoniazid,resistance,,,Uncertain significance,Unconfirmed,isoniazid_ahpC_c.-48G>T
 ahpC,c.-49T>G,isoniazid,resistance,,,Uncertain significance,Unconfirmed,isoniazid_ahpC_c.-49T>G
 ahpC,c.-4A>G,isoniazid,resistance,,,Uncertain significance,Unconfirmed,isoniazid_ahpC_c.-4A>G
 ahpC,c.-51G>T,isoniazid,resistance,,,Uncertain significance,Unconfirmed,isoniazid_ahpC_c.-51G>T
-ahpC,c.-52C>T,isoniazid,resistance,,WHO List,Uncertain significance,Unconfirmed,isoniazid_ahpC_c.-52C>T
-ahpC,c.-52C>T,isoniazid,resistance,,WHO List,combo,combo,isoniazid_ahpC_c.-52C>T
+ahpC,c.-52C>T,isoniazid,combo-resistance,,WHO List,Uncertain significance,Unconfirmed,isoniazid_ahpC_c.-52C>T
 ahpC,c.-54C>T,isoniazid,resistance,,WHO List,Uncertain significance,Unconfirmed,isoniazid_ahpC_c.-54C>T
 ahpC,c.-5G>A,isoniazid,resistance,,,Uncertain significance,Unconfirmed,isoniazid_ahpC_c.-5G>A
 ahpC,c.-66G>A,isoniazid,resistance,,,Uncertain significance,Unconfirmed,isoniazid_ahpC_c.-66G>A
 ahpC,c.-74G>A,isoniazid,resistance,,WHO List,Uncertain significance,Unconfirmed,isoniazid_ahpC_c.-74G>A
-ahpC,c.-81C>T,isoniazid,resistance,,WHO List,Uncertain significance,Unconfirmed,isoniazid_ahpC_c.-81C>T
-ahpC,c.-81C>T,isoniazid,resistance,,WHO List,combo,combo,isoniazid_ahpC_c.-81C>T
+ahpC,c.-81C>T,isoniazid,combo-resistance,,WHO List,Uncertain significance,Unconfirmed,isoniazid_ahpC_c.-81C>T
 ahpC,p.Asp33Asn,isoniazid,resistance,,,Uncertain significance,Unconfirmed,isoniazid_ahpC_p.Asp33Asn
-ahpC,p.Asp73His,isoniazid,resistance,,WHO List,Uncertain significance,Unconfirmed,isoniazid_ahpC_p.Asp73His
-ahpC,p.Asp73His,isoniazid,resistance,,WHO List,combo,combo,isoniazid_ahpC_p.Asp73His
-ahpC,p.Glu76Lys,isoniazid,resistance,,WHO List,Uncertain significance,Unconfirmed,isoniazid_ahpC_p.Glu76Lys
-ahpC,p.Glu76Lys,isoniazid,resistance,,WHO List,combo,combo,isoniazid_ahpC_p.Glu76Lys
-ahpC,p.Glu76Lys,isoniazid,resistance,,WHO List,combo,combo,isoniazid_ahpC_p.Glu76Lys
+ahpC,p.Asp73His,isoniazid,combo-resistance,,WHO List,Uncertain significance,Unconfirmed,isoniazid_ahpC_p.Asp73His
+ahpC,p.Glu76Lys,isoniazid,combo-resistance,,WHO List,Uncertain significance,Unconfirmed,isoniazid_ahpC_p.Glu76Lys
 ahpC,p.Leu191Arg,isoniazid,resistance,,WHO List,Uncertain significance,Unconfirmed,isoniazid_ahpC_p.Leu191Arg
 ahpC,p.Phe10Ile,isoniazid,resistance,,,Uncertain significance,Unconfirmed,isoniazid_ahpC_p.Phe10Ile
 ahpC,p.Pro2Ser,isoniazid,resistance,,,Uncertain significance,Unconfirmed,isoniazid_ahpC_p.Pro2Ser
@@ -1273,19 +1262,15 @@ fabG1,c.-8T>G,isoniazid,resistance,,WHO List,Uncertain significance,Unconfirmed,
 fabG1,c.-92A>T,isoniazid,resistance,,,Uncertain significance,Unconfirmed,isoniazid_fabG1_c.-92A>T
 inhA,p.Gly40Trp,isoniazid,resistance,,WHO List,Uncertain significance,Unconfirmed,isoniazid_inhA_p.Gly40Trp
 inhA,p.Ile16Thr,isoniazid,resistance,,WHO List,Uncertain significance,Unconfirmed,isoniazid_inhA_p.Ile16Thr
-inhA,p.Ile194Thr,isoniazid,resistance,,WHO List,Uncertain significance,Unconfirmed,isoniazid_inhA_p.Ile194Thr
-inhA,p.Ile194Thr,isoniazid,resistance,,WHO List,combo,combo,isoniazid_inhA_p.Ile194Thr
+inhA,p.Ile194Thr,isoniazid,combo-resistance,,WHO List,Uncertain significance,Unconfirmed,isoniazid_inhA_p.Ile194Thr
 inhA,p.Ile21Asn,isoniazid,resistance,,,Uncertain significance,Unconfirmed,isoniazid_inhA_p.Ile21Asn
 inhA,p.Ile21Thr,isoniazid,resistance,,WHO List,Uncertain significance,Unconfirmed,isoniazid_inhA_p.Ile21Thr
-inhA,p.Ile21Val,isoniazid,resistance,,WHO List,Uncertain significance,Unconfirmed,isoniazid_inhA_p.Ile21Val
-inhA,p.Ile21Val,isoniazid,resistance,,WHO List,combo,combo,isoniazid_inhA_p.Ile21Val
+inhA,p.Ile21Val,isoniazid,combo-resistance,,WHO List,Uncertain significance,Unconfirmed,isoniazid_inhA_p.Ile21Val
 inhA,p.Ile47Thr,isoniazid,resistance,,,Uncertain significance,Unconfirmed,isoniazid_inhA_p.Ile47Thr
 inhA,p.Ile95Thr,isoniazid,resistance,,,Uncertain significance,Unconfirmed,isoniazid_inhA_p.Ile95Thr
 inhA,p.Leu11Val,isoniazid,resistance,,,Uncertain significance,Unconfirmed,isoniazid_inhA_p.Leu11Val
 inhA,p.Lys8Asn,isoniazid,resistance,,,Uncertain significance,Unconfirmed,isoniazid_inhA_p.Lys8Asn
-inhA,p.Ser94Ala,isoniazid,resistance,,WHO List,Uncertain significance,Unconfirmed,isoniazid_inhA_p.Ser94Ala
-inhA,p.Ser94Ala,isoniazid,resistance,,WHO List,combo,combo,isoniazid_inhA_p.Ser94Ala
-inhA,p.Ser94Ala,isoniazid,resistance,,WHO List,combo,combo,isoniazid_inhA_p.Ser94Ala
+inhA,p.Ser94Ala,isoniazid,combo-resistance,,WHO List,Uncertain significance,Unconfirmed,isoniazid_inhA_p.Ser94Ala
 inhA,p.Ser94Leu,isoniazid,resistance,,,Uncertain significance,Unconfirmed,isoniazid_inhA_p.Ser94Leu
 inhA,p.Ser94Trp,isoniazid,resistance,,,Uncertain significance,Unconfirmed,isoniazid_inhA_p.Ser94Trp
 kasA,p.Arg121Lys,isoniazid,resistance,,,Uncertain significance,Unconfirmed,isoniazid_kasA_p.Arg121Lys
@@ -1568,8 +1553,7 @@ rrs,n.1402C>T,kanamycin,resistance,,,Uncertain significance,Unconfirmed,kanamyci
 rrs,n.1484G>T,kanamycin,resistance,,,Uncertain significance,Unconfirmed,kanamycin_rrs_n.1484G>T
 gyrA,p.Ala74Ser,levofloxacin,resistance,,WHO List,Uncertain significance,Unconfirmed,levofloxacin_gyrA_p.Ala74Ser
 gyrA,p.Ala90Glu,levofloxacin,resistance,,,Uncertain significance,Unconfirmed,levofloxacin_gyrA_p.Ala90Glu
-gyrA,p.Ala90Val,levofloxacin,resistance,,WHO List,Assoc w R,High,levofloxacin_gyrA_p.Ala90Val
-gyrA,p.Ala90Val,levofloxacin,resistance,,WHO List,combo,combo,levofloxacin_gyrA_p.Ala90Val
+gyrA,p.Ala90Val,levofloxacin,combo-resistance,,WHO List,Assoc w R,High,levofloxacin_gyrA_p.Ala90Val
 gyrA,p.Arg68Gly,levofloxacin,resistance,,,Uncertain significance,Unconfirmed,levofloxacin_gyrA_p.Arg68Gly
 gyrA,p.Asp89Asn,levofloxacin,resistance,,WHO List,Uncertain significance,Unconfirmed,levofloxacin_gyrA_p.Asp89Asn
 gyrA,p.Asp94Ala,levofloxacin,resistance,,WHO List,Assoc w R,High,levofloxacin_gyrA_p.Asp94Ala
@@ -1617,8 +1601,7 @@ rrl,n.2299G>T,linezolid,resistance,,,Uncertain significance,Unconfirmed,linezoli
 rrl,n.2814G>T,linezolid,resistance,,,Uncertain significance,Unconfirmed,linezolid_rrl_n.2814G>T
 gyrA,p.Ala74Ser,moxifloxacin,resistance,,WHO List,Uncertain significance,Unconfirmed,moxifloxacin_gyrA_p.Ala74Ser
 gyrA,p.Ala90Glu,moxifloxacin,resistance,,,Uncertain significance,Unconfirmed,moxifloxacin_gyrA_p.Ala90Glu
-gyrA,p.Ala90Val,moxifloxacin,resistance,,WHO List,Assoc w R,High,moxifloxacin_gyrA_p.Ala90Val
-gyrA,p.Ala90Val,moxifloxacin,resistance,,WHO List,combo,combo,moxifloxacin_gyrA_p.Ala90Val
+gyrA,p.Ala90Val,moxifloxacin,combo-resistance,,WHO List,Assoc w R,High,moxifloxacin_gyrA_p.Ala90Val
 gyrA,p.Arg68Gly,moxifloxacin,resistance,,,Uncertain significance,Unconfirmed,moxifloxacin_gyrA_p.Arg68Gly
 gyrA,p.Asp89Asn,moxifloxacin,resistance,,WHO List,Uncertain significance,Unconfirmed,moxifloxacin_gyrA_p.Asp89Asn
 gyrA,p.Asp94Ala,moxifloxacin,resistance,,WHO List,Assoc w R,High,moxifloxacin_gyrA_p.Asp94Ala
@@ -2175,7 +2158,6 @@ rpoB,p.Asp435Gly,rifampicin,resistance,,WHO List,Assoc w R - Interim,Moderate,ri
 rpoB,p.Asp435His,rifampicin,resistance,,WHO List,Assoc w R - Interim,Moderate,rifampicin_rpoB_p.Asp435His
 rpoB,p.Asp435Phe,rifampicin,resistance,,WHO List,Assoc w R,High,rifampicin_rpoB_p.Asp435Phe
 rpoB,p.Asp435Tyr,rifampicin,low_level,,WHO List,Assoc w R,High,rifampicin_rpoB_p.Asp435Tyr
-rpoB,p.Asp435Tyr,rifampicin,low_level,,WHO List,combo,High,rifampicin_rpoB_p.Asp435Tyr
 rpoB,p.Asp435Val,rifampicin,resistance,,WHO List,Assoc w R,High,rifampicin_rpoB_p.Asp435Val
 rpoB,p.Gln409His,rifampicin,resistance,,,Uncertain significance,Unconfirmed,rifampicin_rpoB_p.Gln409His
 rpoB,p.Gln429His,rifampicin,resistance,,WHO List,Assoc w R - Interim,Moderate,rifampicin_rpoB_p.Gln429His
@@ -2289,8 +2271,7 @@ rpsL,p.Arg86Pro,streptomycin,resistance,,,Uncertain significance,Unconfirmed,str
 rpsL,p.Arg86Trp,streptomycin,resistance,,,Uncertain significance,Unconfirmed,streptomycin_rpsL_p.Arg86Trp
 rpsL,p.Arg9His,streptomycin,resistance,,,Uncertain significance,Unconfirmed,streptomycin_rpsL_p.Arg9His
 rpsL,p.Gly84Val,streptomycin,resistance,,,Uncertain significance,Unconfirmed,streptomycin_rpsL_p.Gly84Val
-rpsL,p.Lys43Arg,streptomycin,resistance,,WHO List,Assoc w R,High,streptomycin_rpsL_p.Lys43Arg
-rpsL,p.Lys43Arg,streptomycin,resistance,,WHO List,combo,combo,streptomycin_rpsL_p.Lys43Arg
+rpsL,p.Lys43Arg,streptomycin,combo-resistance,,WHO List,Assoc w R,High,streptomycin_rpsL_p.Lys43Arg
 rpsL,p.Lys43Thr,streptomycin,resistance,,WHO List,Uncertain significance,Unconfirmed,streptomycin_rpsL_p.Lys43Thr
 rpsL,p.Lys51Asn,streptomycin,resistance,,,Uncertain significance,Unconfirmed,streptomycin_rpsL_p.Lys51Asn
 rpsL,p.Lys88Arg,streptomycin,resistance,,WHO List,Assoc w R,High,streptomycin_rpsL_p.Lys88Arg
@@ -2323,19 +2304,16 @@ rrs,n.907A>T,streptomycin,resistance,,,Uncertain significance,Unconfirmed,strept
 rrs,n.908A>G,streptomycin,resistance,,,Uncertain significance,Unconfirmed,streptomycin_rrs_n.908A>G
 pncA,c.515_516insC,pyrazinamide,resistance,,WHO List,Assoc w R,High,pyrazinamide_pncA_c.515_516insC
 pncA,c.-5del,pyrazinamide,resistance,,WHO List,Assoc w R,High,pyrazinamide_pncA_c.-5del
-pncA,c.-5del,pyrazinamide,resistance,,WHO List,Assoc w R - Interim,Moderate,pyrazinamide_pncA_c.-5del
 pncA,c.386_389del,pyrazinamide,resistance,,WHO List,Assoc w R,High,pyrazinamide_pncA_c.386_389del
 pncA,c.317del,pyrazinamide,resistance,,WHO List,Assoc w R,High,pyrazinamide_pncA_c.317del
 pncA,c.517_518insC,pyrazinamide,resistance,,WHO List,Assoc w R,High,pyrazinamide_pncA_c.517_518insC
 pncA,c.380_388del,pyrazinamide,resistance,,WHO List,Assoc w R,High,pyrazinamide_pncA_c.380_388del
 pncA,c.391_392insC,pyrazinamide,resistance,,WHO List,Assoc w R,High,pyrazinamide_pncA_c.391_392insC
 pncA,c.391_392insCC,pyrazinamide,resistance,,WHO List,Assoc w R,High,pyrazinamide_pncA_c.391_392insCC
-pncA,c.391_392insCC,pyrazinamide,resistance,,WHO List,Assoc w R - Interim,Moderate,pyrazinamide_pncA_c.391_392insCC
 pncA,c.386_394del,pyrazinamide,resistance,,WHO List,Assoc w R,High,pyrazinamide_pncA_c.386_394del
 pncA,c.454_455insG,pyrazinamide,resistance,,WHO List,Assoc w R,High,pyrazinamide_pncA_c.454_455insG
 pncA,c.464_465insA,pyrazinamide,resistance,,WHO List,Assoc w R,High,pyrazinamide_pncA_c.464_465insA
 pncA,c.375_389del,pyrazinamide,resistance,,WHO List,Assoc w R - Interim,Moderate,pyrazinamide_pncA_c.375_389del
-pncA,c.457del,pyrazinamide,resistance,,WHO List,Assoc w R - Interim,Moderate,pyrazinamide_pncA_c.457del
 pncA,c.457del,pyrazinamide,resistance,,WHO List,Assoc w R - Interim,Moderate,pyrazinamide_pncA_c.457del
 pncA,c.34_35insC,pyrazinamide,resistance,,WHO List,Assoc w R - Interim,Moderate,pyrazinamide_pncA_c.34_35insC
 pncA,c.456_457insG,pyrazinamide,resistance,,WHO List,Assoc w R - Interim,Moderate,pyrazinamide_pncA_c.456_457insG
@@ -2391,7 +2369,6 @@ pncA,c.259_260insTGTCCAGACTGGGA,pyrazinamide,resistance,,WHO List,Assoc w R - In
 pncA,c.260del,pyrazinamide,resistance,,WHO List,Assoc w R - Interim,Moderate,pyrazinamide_pncA_c.260del
 pncA,c.277_278insCCGCCTCGATTG,pyrazinamide,resistance,,WHO List,Assoc w R - Interim,Moderate,pyrazinamide_pncA_c.277_278insCCGCCTCGATTG
 pncA,c.286_287insA,pyrazinamide,resistance,,WHO List,Assoc w R - Interim,Moderate,pyrazinamide_pncA_c.286_287insA
-pncA,c.286_287insA,pyrazinamide,resistance,,WHO List,Assoc w R - Interim,Moderate,pyrazinamide_pncA_c.286_287insA
 pncA,c.287del,pyrazinamide,resistance,,WHO List,Assoc w R - Interim,Moderate,pyrazinamide_pncA_c.287del
 pncA,c.290del,pyrazinamide,resistance,,WHO List,Assoc w R - Interim,Moderate,pyrazinamide_pncA_c.290del
 pncA,c.305del,pyrazinamide,resistance,,WHO List,Assoc w R - Interim,Moderate,pyrazinamide_pncA_c.305del
@@ -2446,7 +2423,6 @@ pncA,c.492_494del,pyrazinamide,resistance,,WHO List,Assoc w R - Interim,Moderate
 pncA,c.515del,pyrazinamide,resistance,,WHO List,Assoc w R - Interim,Moderate,pyrazinamide_pncA_c.515del
 pncA,c.523_524insT,pyrazinamide,resistance,,WHO List,Assoc w R - Interim,Moderate,pyrazinamide_pncA_c.523_524insT
 pncA,c.528_529insGC,pyrazinamide,resistance,,WHO List,Assoc w R - Interim,Moderate,pyrazinamide_pncA_c.528_529insGC
-pncA,c.528_529insGC,pyrazinamide,resistance,,WHO List,Assoc w R - Interim,Moderate,pyrazinamide_pncA_c.528_529insGC
 pncA,c.532del,pyrazinamide,resistance,,WHO List,Assoc w R - Interim,Moderate,pyrazinamide_pncA_c.532del
 pncA,c.509_510insCG,pyrazinamide,resistance,,WHO List,Assoc w R - Interim,Moderate,pyrazinamide_pncA_c.509_510insCG
 pncA,c.533_538del,pyrazinamide,resistance,,WHO List,Assoc w R - Interim,Moderate,pyrazinamide_pncA_c.533_538del
@@ -2496,7 +2472,6 @@ Rv1258c,p.Asp67Asn,pyrazinamide,not_reportable,,WHO List,Uncertain significance,
 Rv3236c,p.Val300Ile,pyrazinamide,not_reportable,,WHO List,Uncertain significance,Unconfirmed,pyrazinamide_Rv3236c_p.Val300Ile
 panD,c.-1895C>A,pyrazinamide,not_reportable,,WHO List,Uncertain significance,Unconfirmed,pyrazinamide_panD_c.-1895C>A
 Rv1258c,c.580_581insG,pyrazinamide,not_reportable,,WHO List,Uncertain significance,Unconfirmed,pyrazinamide_Rv1258c_c.580_581insG
-Rv1258c,c.580_581insG,pyrazinamide,not_reportable,,WHO List,Not assoc w R,Not assoc w R,pyrazinamide_Rv1258c_c.580_581insG
 PPE35,p.Val694Leu,pyrazinamide,not_reportable,,WHO List,Uncertain significance,Unconfirmed,pyrazinamide_PPE35_p.Val694Leu
 PPE35,c.-63G>C,pyrazinamide,not_reportable,,WHO List,Uncertain significance,Unconfirmed,pyrazinamide_PPE35_c.-63G>C
 PPE35,p.Thr846Met,pyrazinamide,not_reportable,,WHO List,Uncertain significance,Unconfirmed,pyrazinamide_PPE35_p.Thr846Met
@@ -2771,7 +2746,6 @@ PPE35,p.Val854Ala,pyrazinamide,not_reportable,,WHO List,Uncertain significance,U
 PPE35,p.Val854Met,pyrazinamide,not_reportable,,WHO List,Uncertain significance,Unconfirmed,pyrazinamide_PPE35_p.Val854Met
 PPE35,p.Val967Ala,pyrazinamide,not_reportable,,WHO List,Uncertain significance,Unconfirmed,pyrazinamide_PPE35_p.Val967Ala
 PPE35,p.Trp919*,pyrazinamide,not_reportable,,WHO List,Uncertain significance,Unconfirmed,pyrazinamide_PPE35_p.Trp919*
-Rv1258c,c.103_112del,pyrazinamide,not_reportable,,WHO List,Uncertain significance,Unconfirmed,pyrazinamide_Rv1258c_c.103_112del
 Rv1258c,c.103_112del,pyrazinamide,not_reportable,,WHO List,Uncertain significance,Unconfirmed,pyrazinamide_Rv1258c_c.103_112del
 Rv1258c,c.123_150del,pyrazinamide,not_reportable,,WHO List,Uncertain significance,Unconfirmed,pyrazinamide_Rv1258c_c.123_150del
 Rv1258c,c.230_231insA,pyrazinamide,not_reportable,,WHO List,Uncertain significance,Unconfirmed,pyrazinamide_Rv1258c_c.230_231insA
@@ -3459,7 +3433,6 @@ Rv0678,p.Arg96Trp,bedaquiline,resistance,,WHO List,Uncertain significance,Unconf
 Rv0678,p.Ser158Arg,bedaquiline,resistance,,WHO List,Uncertain significance,Unconfirmed,bedaquiline_Rv0678_p.Ser158Arg
 Rv0678,p.Ser2Ile,bedaquiline,resistance,,WHO List,Uncertain significance,Unconfirmed,bedaquiline_Rv0678_p.Ser2Ile
 Rv0678,p.Ser52Pro,bedaquiline,resistance,,WHO List,Uncertain significance,Unconfirmed,bedaquiline_Rv0678_p.Ser52Pro
-Rv0678,p.Ser68Gly,bedaquiline,resistance,,WHO List,Uncertain significance,Unconfirmed,bedaquiline_Rv0678_p.Ser68Gly
 Rv0678,p.Ser68Ile,bedaquiline,resistance,,WHO List,Uncertain significance,Unconfirmed,bedaquiline_Rv0678_p.Ser68Ile
 Rv0678,p.Thr58Pro,bedaquiline,resistance,,WHO List,Uncertain significance,Unconfirmed,bedaquiline_Rv0678_p.Thr58Pro
 Rv0678,p.Val20Ala,bedaquiline,resistance,,WHO List,Uncertain significance,Unconfirmed,bedaquiline_Rv0678_p.Val20Ala
@@ -4002,7 +3975,6 @@ Rv0678,p.Arg96Gly,clofazimine,resistance,,WHO List,Uncertain significance,Unconf
 Rv0678,p.Arg96Trp,clofazimine,resistance,,WHO List,Uncertain significance,Unconfirmed,clofazimine_Rv0678_p.Arg96Trp
 Rv0678,p.Ser2Ile,clofazimine,resistance,,WHO List,Uncertain significance,Unconfirmed,clofazimine_Rv0678_p.Ser2Ile
 Rv0678,p.Ser52Pro,clofazimine,resistance,,WHO List,Uncertain significance,Unconfirmed,clofazimine_Rv0678_p.Ser52Pro
-Rv0678,p.Ser68Gly,clofazimine,resistance,,WHO List,Uncertain significance,Unconfirmed,clofazimine_Rv0678_p.Ser68Gly
 Rv0678,p.Thr58Lys,clofazimine,resistance,,WHO List,Uncertain significance,Unconfirmed,clofazimine_Rv0678_p.Thr58Lys
 Rv0678,p.Val1Leu,clofazimine,resistance,,WHO List,Uncertain significance,Unconfirmed,clofazimine_Rv0678_p.Val1Leu
 Rv0678,p.Val20Ala,clofazimine,resistance,,WHO List,Uncertain significance,Unconfirmed,clofazimine_Rv0678_p.Val20Ala

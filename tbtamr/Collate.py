@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
 import json
+
 from os import path
-import pandas,pathlib
+
+import pandas, pathlib
 pandas.options.mode.chained_assignment = None
 
-# from pandas.core.algorithms import isin
+
 from tbtamr.CustomLog import logger
 from tbtamr.TbTamr import Tbtamr
 
@@ -69,7 +71,126 @@ class Inferrence(Tbtamr):
     def __init__(self,args):
         super().__init__()
         self.isolates = args
+        self.db_path = f"{pathlib.Path(__file__).parent.parent /'tbtamr' /'db' / 'tbtamr_db_latest.json'}"
+        self.db = self._get_db(path = self.db_path)
         self.drugs = self._get_drugs()
+        self.low_level = self._get_low_level()
+        self.not_reportable = self._get_not_reportable()
+        
+    def _get_db(self,path):
+
+        try:
+            with open(path, 'r') as j:
+                return json.load(j)
+        except Exception as err:
+            logger.critical(f"There seems to have been an error opening {path}. The following error was reported {err}")
+
+
+    def _get_low_level(self):
+        
+        low_level = []
+        for record in self.db:
+            if self.db[record]['Confers'] == 'low_level':
+                low_level.append(record)
+        
+        return low_level
+
+    def _get_not_reportable(self):
+
+        not_reportable = []
+        for record in self.db:
+            if self.db[record]['Confers'] == 'not_reportable':
+                not_reportable.append(record)
+        
+        return not_reportable
+
+    def _get_header(self,_type):
+
+        if _type == 'mdu':
+            header =  [
+                "Seq_ID",
+                "Species",
+                "Phylogenetic lineage",
+                'Predicted drug resistance',
+                "Rifampicin",
+                "Rifampicin - Interpretation",
+                "Rifampicin - Confidence",
+                "Isoniazid",
+                "Isoniazid - Interpretation",
+                "Isoniazid - Confidence",
+                "Pyrazinamide",
+                "Pyrazinamide - Interpretation",
+                "Pyrazinamide - Confidence",
+                "Ethambutol",
+                "Ethambutol - Interpretation",
+                "Ethambutol - Confidence",
+                "Moxifloxacin",
+                "Moxifloxacin - Interpretation",
+                "Moxifloxacin - Confidence",
+                "Amikacin",
+                "Amikacin - Interpretation",
+                "Amikacin - Confidence",
+                "Cycloserine",
+                "Cycloserine - Interpretation",
+                "Cycloserine - Confidence",
+                "Ethionamide",
+                "Ethionamide - Interpretation",
+                "Ethionamide - Confidence",
+                "Kanamycin",
+                "Kanamycin - Interpretation",
+                "Kanamycin - Confidence",
+                "Streptomycin",
+                "Streptomycin - Interpretation",
+                "Streptomycin - Confidence",
+                "Capreomycin",
+                "Capreomycin - Interpretation",
+                "Capreomycin - Confidence",
+                "Para-aminosalicylic acid",
+                "Para-aminosalicylic acid - Interpretation",
+                "Para-aminosalicylic acid - Confidence",
+                "Clofazimine",
+                "Clofazimine - Interpretation",
+                "Clofazimine - Confidence",
+                "Delamanid",
+                "Delamanid - Interpretation",
+                "Delamanid - Confidence",
+                "Bedaquiline",
+                "Bedaquiline - Interpretation",
+                "Bedaquiline - Confidence",
+                "Linezolid",
+                "Linezolid - Interpretation",
+                "Linezolid - Confidence",
+                "Database version"
+            ]
+        else:
+            header =  [
+                "Seq_ID",
+                "Species",
+                "Phylogenetic lineage",
+                'Predicted drug resistance',
+                "Rifampicin",
+                "Isoniazid",
+                "Pyrazinamide",
+                "Ethambutol",
+                "Moxifloxacin",
+                "Amikacin",
+                "Cycloserine",
+                "Ethionamide",
+                "Kanamycin",
+                "Streptomycin",
+                "Capreomycin",
+                "Para-aminosalicylic acid",
+                "Clofazimine",
+                "Delamanid",
+                "Bedaquiline",
+                "Linezolid",
+                "Median genome coverage",
+                "Percentage reads mapped",
+                "Database version"
+            ]
+
+        return header
+
 
     def _get_drugs(self):
 
@@ -94,32 +215,7 @@ class Inferrence(Tbtamr):
 
         return drugs
    
-    def _get_funcs(self):
-        funcs= {
-                'rifampicin':self._rifampicin,
-                'isoniazid': self._isoniazid,
-                'pyrazinamide': self._pyrazinamide,
-                'ethambutol':self._ethambutol,
-                'moxifloxacin':self._other_drugs,
-                'ofloxacin':self._other_drugs,
-                'amikacin':self._other_drugs,
-                'capreomycin':self._other_drugs,
-                'kanamycin':self._other_drugs,
-                'ethionamide':self._other_drugs,
-                'streptomycin':self._other_drugs,
-                'cycloserine':self._other_drugs,
-                'para-aminosalicylic_acid': self._other_drugs,
-                'clofazimine': self._other_drugs,
-                'delamanid':self._other_drugs,
-                'bedaquiline':self._other_drugs,
-                'linezolid':self._other_drugs,
-                'kanamycin':self._other_drugs,
-                'streptomycin':self._other_drugs,
-                'capreomycin':self._other_drugs
-                }
-
-        return funcs
-
+    
     def _open_json(self, path, for_appending = False):
 
         try:
@@ -144,179 +240,82 @@ class Inferrence(Tbtamr):
             
         logger.info(f"Saving file: {_path}.json")
         with open(f"{_path}.json", 'w') as f:
-            json.dump(_to_save,f)
+            json.dump(_to_save,f, indent = 4)
 
-    def _save_csv(self, _data, _path):
+    def _save_csv(self, _data, _path, _type):
         
         logger.info(f"Saving file: {_path}.csv")
 
-        header = [
-            "Seq_ID",
-            "Species",
-            "Phylogenetic lineage",
-            'Predicted drug resistance',
-            "Rifampicin",
-            "Isoniazid",
-            "Pyrazinamide",
-            "Ethambutol",
-            "Moxifloxacin",
-            "Amikacin",
-            "Cycloserine",
-            "Ethionamide",
-            "Kanamycin",
-            "Streptomycin",
-            "Capreomycin",
-            "Para-aminosalicylic acid",
-            "Clofazimine",
-            "Delamanid",
-            "Bedaquiline",
-            "Linezolid",
-            "Median genome coverage",
-            "Percentage reads mapped",
-            "Database version"
-         ]
+        header = self._get_header(_type = _type)
 
+        if isinstance(_data, dict):       
+            df = pandas.DataFrame(_data, index = [0])
+        else:
+            df = pandas.DataFrame(_data)
         
-        df = pandas.DataFrame(_data)
         df = df[header]
         
         df.to_csv(f"{_path}.csv", index = False)
 
     def _save_data(self, _data, prefix):
 
-        self._save_csv(_data,prefix)
+        self._save_csv(_data,prefix, 'general')
         self._save_json(_data,prefix)
 
+    def _get_interpret(self, drug, mut):
 
-    def _rifampicin(self, res):
-        rif_to_remove = [
-            'rpoB_p.Ala286Val',
-            'rpoB_p.Arg552Cys',
-            'rpoB_p.Glu423Ala',
-            'rpoB_p.Glu460Gly',
-            'rpoB_p.Glu592Asp',
-            'rpoB_p.Glu761Asp',
-            'rpoB_p.Gly981Asp',
-            'rpoB_p.Ile480Thr',
-            'rpoB_p.Ile480Val',
-            'rpoB_p.Leu490Val',
-            'rpoB_p.Phe424Leu',
-            'rpoB_p.Phe424Val',
-            'rpoB_p.Pro454Arg',
-            'rpoB_p.Pro454His',
-            'rpoB_p.Pro454Leu',
-            'rpoB_p.Pro454Ser',
-            'rpoB_p.Pro483Leu',
-            'rpoB_p.Ser493Leu',
-            'rpoB_p.Thr400Ala',
-            'rpoB_p.Gly332Arg'
-            ]
-        rif_borderline = ["rpoB_p.Leu430Pro","rpoB_p.His445Asn","rpoB_p.Asp435Tyr",
-                      "rpoB_p.Leu452Pro","p.Ile491Phe"]
-#     print(x)
-        if res == '-':
-            return 'No mechanism identified'
-        elif res in ["*-","-*"]:
-            return 'No mechanism identified^'
+        interp = {'resistance': 'Resistant',
+                   'low_level': 'Low-level resistant',
+                   'not_reportable': 'Not-reportable',
+                   'combo-resistance': 'Resistant only in combination'
+                    }
+        k = f"{drug}_{mut}"
+        if mut != 'No mechanism identified':
+            return interp[self.db[k]['Confers']]
         else:
-            inds = [i.strip() for i in res.split(',')]
-#         print(inds)
-        if len(inds) == 1 and inds[0] in rif_to_remove:
-            return 'No mechanism identified'
-        elif len(inds) == 1 and inds[0] in rif_borderline:
-            return f'{inds[0]}*'
-        else:
-            return f";".join(inds)
-
-    def _isoniazid(self,res):
-        if res == '-':
-            return 'No mechanism identified'
-        elif res in ["*-","-*"]:
-            return 'No mechanism identified^'
-        else:
-            inds = [i.strip() for i in res.split(',')]
-        if len(inds) == 1 and 'ahpC' in inds[0]:
-            return 'No mechanism identified'
-        elif len(inds) == 1 and 'fabG' in inds[0]:
-            return f'{inds[0]}*' if inds[0] == 'fabG1_c.-15C>T' else 'No mechanism identified'
-        else:
-            return f";".join(inds)
-
-    def _emb_comp(self, res):
+            return 'Susceptible'
     
-        gln497_hc = ['embB_p.Gln497Arg','embB_p.Gln497Lys']
-        leu370_us = ['embB_p.Leu370Arg']
-        embA = ['embA_c.-16C>T']
-        to_remove = []
-        for r in res:
-            if 'embB_p.Gln497' in r and r not in gln497_hc:
-                to_remove.append(r)
-            elif r in leu370_us:
-                to_remove.append(r)
-            elif r in embA:
-                to_remove.append(r)
-        if len(set(res).difference(to_remove))== 0:
-            return 'No mechanism identified'
+    def _get_confidence(self, drug, mut):
+
+        k = f"{drug}_{mut}"
+        if mut != 'No mechanism identified':
+            return self.db[k]['Confidence_tbtamr']
         else:
-            return ';'.join(list(set(res).difference(to_remove)))
+            return ''
 
-    def _ethambutol(self,res):
-             
-        if res == '-':
-            return 'No mechanism identified'
-        elif res in ["*-","-*"]:
-            return 'No mechanism identified^'
-        else:
-            inds = [i.strip() for i in res.split(',')]
-            return self._emb_comp(res = inds)
-    
-    def _remove_who(self,res):
 
-        not_reportable = ['PPE35','clpC1','Rv3236c', 'Rv1258c','panD']
-        to_remove = []
-        for i in res:
-            for r in not_reportable:
-                if r in i:
-                    to_remove.append(i)
+    def _inference_of_drugs(self, res, drug):
         
-        if len(set(res).difference(to_remove))== 0:
-            return 'No mechanism identified*'
-        else:    
-            return f";".join(list(set(res).difference(to_remove)))
-
-    def _pyrazinamide(self,res):
-        
-        if res == '-':
-            return 'No mechanism identified'
-        elif res in ["*-","-*"]:
-            return 'No mechanism identified^'
+        result = []
         inds = [i.strip() for i in res.split(',')]
+        for i in inds:
+            if i in ["-", "*-","-*"]:
+                mut = 'No mechanism identified'
+            else:
+                mut = i.strip('*')
+            _d = {  'mutation':mut, 
+                    'confidence':self._get_confidence(drug = drug, mut = mut),
+                    'interpretation':self._get_interpret(drug = drug, mut = mut)}
+            result.append(_d)
         
-        return self._remove_who(inds)
+        return result
 
-    def _other_drugs(self, res):
-        if res == '-':
-            return 'No mechanism identified'
-        elif res in ["*-","-*"]:
-            return 'No mechanism identified^'
-        return f";".join(res.split(','))
-    
     def _infer_drugs(self, tbp_result, seq_id):
 
         _d = {'Seq_ID':seq_id}
-        funcs = self._get_funcs()
+        
         for drug in self.drugs:
             logger.info(f"Checking {drug}")
-            _d[self.drugs[drug]] = funcs[drug](tbp_result[seq_id][drug])
+            _d[self.drugs[drug]] = self._inference_of_drugs(res = tbp_result[seq_id][drug], drug = drug)
         
         return _d
     
     def _infer_dr_profile(self, res):
         
-        # fline_a = ['rifampicin','isoniazid']
+        # print(res)
         fline_b = ['pyrazinamide','ethambutol']
         flq = ['ofloxacin','moxifloxacin','levofloxacin']
-        other_groupA = ["bedaquiline",	"linezolid","delamanid"]
+        other_groupA = ["bedaquiline","linezolid","delamanid"]
         score = 0
         other_score = False
         flq_score = False
@@ -325,26 +324,23 @@ class Inferrence(Tbtamr):
         fline_score = 1
         rf = ''
         
-        suff = ""
+        
         for drug in self.drugs:
-            if 'No mechanism identified' not in res[self.drugs[drug]]:
-                if drug in flq:
+            if 'No mechanism identified' not in res[self.drugs[drug]][0]['mutation']:
+                # get the interpretations from the results
+                interp = [i['interpretation'] for i in res[self.drugs[drug]]]
+                if drug in flq and any(item in interp for item in ['Low-level resistant','Resistant']):
                     flq_score = True
-                if drug in other_groupA:
+                if drug in other_groupA and any(item in interp for item in ['Low-level resistant','Resistant']):
                     other_score = True
-                if drug == 'rifampicin':
+                if drug == 'rifampicin' and any(item in interp for item in ['Low-level resistant','Resistant']):
                     rf = ' (RR-TB)'
                     score = score + rif
-                elif drug == 'isoniazid':
+                elif drug == 'isoniazid' and any(item in interp for item in ['Low-level resistant','Resistant']):
                     score = score + inh
-                elif drug in fline_b:
+                elif drug in fline_b and any(item in interp for item in ['Low-level resistant','Resistant']):
                     score = score + fline_score
-                
-            if "*" in res[self.drugs[drug]] : #if there are any intermediate resistance mechanims identified add a *
-                suff = f"{suff}*"
-            elif "^" in res[self.drugs[drug]]: # if there are any missing
-                suff = f"{suff}^"
-        print(f"this sample has a score of {score}, flq is {flq_score} and other is {other_score}") 
+        
         resistance = 'No drug resistance predicted'
         if score >=8 and flq_score == True and other_score == False:
             resistance = 'Pre-Extensive/Extensive drug-resistance predicted'
@@ -359,12 +355,12 @@ class Inferrence(Tbtamr):
         
                        
 
-        res['Predicted drug resistance'] = f"{resistance}{suff}"
+        res['Predicted drug resistance'] = f"{resistance}"
         
         return res
 
     def _species(self,res, seq_id):
-        # pass
+        
         species = "Mycobacterium tuberculosis"
         if 'La1' in res[seq_id]['main_lin'] and 'BCG' not in res[seq_id]['sublin']:
             species = f"{species} var bovis"
@@ -396,6 +392,52 @@ class Inferrence(Tbtamr):
 
         return res[seq_id][val]
 
+    def _wrangle_json(self,res):
+
+        
+        for drug in self.drugs:
+            dr = res[self.drugs[drug]]
+            
+            data = []
+            for d in dr:
+                
+                mt = d['mutation']
+                interp = d['interpretation'] if d['interpretation'] in ['Low-level resistant','Resistant'] else 'Susceptible'
+                conf = d['confidence'] if d['interpretation'] in ['Low-level resistant','Resistant'] else ''
+                if mt == 'No mechanism identified':
+                    data.append(mt)
+                else:
+                    data.append(f"{mt} ({interp}|{conf})")
+            res[self.drugs[drug]] = ';'.join(data)
+        logger.info(f"Saving a wide format csv for {res['Seq_ID']}")
+        self._save_csv(_data = res, _path = f"{res['Seq_ID']}/tbtamr", _type = 'general')
+        
+        return res
+
+
+    def _single_report(self, _data):
+
+        lines = [
+            f"Seq_ID:,{_data['Seq_ID']}",
+            f"Species:,{_data['Species']}",
+            f"Phylogenetic lineage:,{_data['Phylogenetic lineage']}",
+            f"Seq_ID:,{_data['Seq_ID']}",
+            f"Predicted drug resistance:,{_data['Predicted drug resistance']}",
+            f"",
+            f"Drug,Mutation,Interpretation,Confidence",
+        ]
+
+        for drug in self.drugs:
+
+            dr = _data[self.drugs[drug]]
+            for d in dr:
+                lines.append(f"{drug.capitalize()},{d['mutation']},{d['interpretation']},{d['confidence']}")
+        
+        lines.append("")
+        lines.append(f"Database version:,{_data['Database version']}")
+
+        logger.info(f"Saving report for {_data['Seq_ID']}")
+        pathlib.Path(f"{_data['Seq_ID']}/tbtamr_report.csv").write_text('\n'.join(lines))
 
     def infer(self):
         
@@ -404,30 +446,91 @@ class Inferrence(Tbtamr):
         for isolate in self.isolates:
             logger.info(f"Working on {isolate}")
             for_collate = self._check_output_file(seq_id=isolate, step = 'collate')
-            # print(for_collate)
             if for_collate:
                 tbp_result = self._open_json(path = self.isolates[isolate]['collate'])
                 raw_result = self._open_json(path = self.isolates[isolate]['profile'])
                 _dict = self._infer_drugs(tbp_result = tbp_result,seq_id=isolate)
-                # print(_dict)
                 _dict = self._infer_dr_profile(res = _dict)
                 _dict['Species'] = self._species(res = tbp_result, seq_id=isolate)
                 _dict['Phylogenetic lineage'] = self._lineage(res = tbp_result, seq_id=isolate)
                 _dict['Database version'] = self._db_version(res = raw_result)
                 _dict['Median genome coverage'] = self._get_qc_feature(seq_id = isolate, res =tbp_result, val = 'median_coverage')
                 _dict['Percentage reads mapped'] = self._get_qc_feature(seq_id = isolate,res = tbp_result, val = 'pct_reads_mapped')
-                self._save_data(_data = [_dict], prefix = f"{isolate}/tbtamr")
-                # self._save_csv(_)
-                results.append(_dict)
-            # else:
-            #     logger.info(f'Collated results already exist for {isolate}.')
-            # break
-        
+                logger.info(f"Saving results for {isolate}.")
+                # saving 'raw' result as json file
+                self._save_json(_data = [_dict], _path = f"{isolate}/tbtamr")
+                # saving a single sample report - in csv format
+                self._single_report(_data = _dict)
+                # turn results into a format that is for generic use - larger tabular structure.
+                results.append(self._wrangle_json(res = _dict))
+            
         logger.info(f"Saving collated data.")
-        self._save_data(_data = results, prefix = "tbtamr")
+        self._save_csv(_data = results, _path = "tbtamr", _type = 'general')
+
+
+
+class Mdu(Inferrence):
+
+    """
+    a class for collation of tbprofiler results.
+    """
+    
+    def __init__(self,args):
+        # super().__init__()
+        self.jsons = args.json
+        self.sop = args.output_name
+        self.runid = args.runid
+        # self.db_path = f"{pathlib.Path(__file__).parent.parent /'tbtamr' /'db' / 'tbtamr_db_latest.json'}"
+        # self.db = self._get_db(path = self.db_path)
+        self.drugs = self._get_drugs()
+        # self.low_level = self._get_low_level()
+        # self.not_reportable = self._get_not_reportable()
+    
+    def _get_infer_conf(self, _dict, drug):
+
+        reportable = ['Low-level resistant','Resistant']
+
+        interp = [i['interpretation'] for i in _dict[self.drugs[drug]] if i['interpretation'] in reportable]
+        conf = [i['confidence'] for i in _dict[self.drugs[drug]]]
+        mut = ';'.join([i['mutation'] for i in _dict[self.drugs[drug]] if i['interpretation'] in reportable])
+        if interp != []:
+            interpretation = sorted(interp)[-1]
+            confidence = sorted(conf)[0]
+        else:
+            interpretation = 'Susceptible'
+            confidence = ''
+            mut = "No mechanism identified"
+
+        
+        return mut,interpretation,confidence
+
+    def _mdu_infer(self, res):
+        
+        # print(res)
         
 
+        for drug in self.drugs:
+            mut,interpretation,confidence = self._get_infer_conf(_dict = res, drug = drug)
+            res[self.drugs[drug]] = mut
+            res[f"{self.drugs[drug]} - Interpretation"] = interpretation
+            res[f"{self.drugs[drug]} - Confidence"] = confidence
+        
+        return res
+            
 
+            
 
-#  headers for output Seq_ID, 
-# Identification (WGS), Phylogenetic lineage,Predicted drug resist. summary:, Rifampicin,Isoniazid,Pyrazinamide,Ethambutol,Moxifloxacin,Amikacin,Cycloserine,Ethionamide,Para-aminosalicylic acid,Clofazimine,Delamanid,Bedaquiline,Linezolid,Database
+    def mduify(self):
+        headers = self._get_header(_type = 'mdu')
+        res = []
+        for j in self.jsons:
+
+            if pathlib.Path(j).exists():
+                js = self._open_json(j)
+                _data = self._mdu_infer(res = js[0])
+                # print(_data)
+                res.append(_data)
+        
+
+        self._save_csv(_data = res, _path = f"{self.sop}_{self.runid}", _type = 'mdu')
+        

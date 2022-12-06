@@ -2,7 +2,7 @@ import argparse, sys
 from distutils.command.install_egg_info import to_filename
 from tbtamr.AmrSetup import AmrSetup
 from tbtamr.RunProfiler import RunProfiler
-from tbtamr.Collate import Inferrence, Parse
+from tbtamr.Collate import Inferrence, Parse, Mdu
 
 from tbtamr.version import __version__
 
@@ -29,7 +29,8 @@ def run_pipeline(args):
     
 
 def mdu(args):
-   pass
+   M = Mdu(args)
+   M.mduify()
 
 
 def set_parsers():
@@ -41,6 +42,7 @@ def set_parsers():
     subparsers = parser.add_subparsers(help="Task to perform")
     parser_sub_run = subparsers.add_parser('run', help='Run tbtamr pipeline', formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser_sub_collate = subparsers.add_parser('collate', help='Collate results from a previous tbtamr run', formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    parser_sub_mdu = subparsers.add_parser('mdu', help='Collate results of tbtamr for mdu-reporting', formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     
     parser_sub_run.add_argument(
         "--read1",
@@ -113,9 +115,33 @@ def set_parsers():
         help="Isolate ID or file containing list of isolates (one per line) to collate."
     )
     
+    parser_sub_mdu.add_argument(
+        '--json',
+        '-j',
+        nargs='+',
+        default='',
+        help="tbtamr.json files for mduifying"
+    )
+
+    parser_sub_mdu.add_argument(
+        '--runid',
+        '-r',
+        help="Run ID - if empty tbtamr will be used",
+        default='tbtamr'
+    )
+
+    parser_sub_mdu.add_argument(
+        '--output_name',
+        '-o',
+        help="The name of the spreadsheet for output",
+        default= 'MMS155'
+    )
+
+    
 
     parser_sub_run.set_defaults(func=run_pipeline)
     parser_sub_collate.set_defaults(func = collate_results)
+    parser_sub_mdu.set_defaults(func = mdu)
     args = parser.parse_args(args=None if sys.argv[1:]  else ['--help'])
     return args
 

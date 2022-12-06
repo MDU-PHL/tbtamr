@@ -17,10 +17,7 @@ class AmrSetup(Tbtamr):
         self.database_path = args.database_path
         self.keep = args.keep
         self.keep_bam = args.keep_bam
-        # self.qc_min_cov = args.qc_min_cov
-        # self.qc_perc_mapped = args.qc_perc_mapped
-        # self.logger = self._get_logger()
-
+        
     def _check_prefix(self):
         """
         If running type is not batch, then check that prefix is present and a string
