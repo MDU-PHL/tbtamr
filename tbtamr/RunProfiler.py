@@ -77,7 +77,7 @@ class RunProfiler(Tbtamr):
         return cmd
 
     def _batch_cmd(self, input_data):
-        cmd = f"parallel --colsep '\\t' -j {self.jobs} 'tb-profiler profile --read1 {{2}} --read2 {{3}} {self.database} --prefix {{1}} --dir {{1}} --min_depth 20 --no_trim --call_whole_genome --threads 1  >> {{1}}/tbprofiler.log 2>&1' :::: {input_data}"
+        cmd = f"parallel --colsep '\\t' -j {self.jobs} 'tb-profiler profile --read1 {{2}} --read2 {{3}} {self.database} --prefix {{1}} --dir {{1}} --min_depth 20 --no_trim --call_whole_genome --threads 1 >> {{1}}/tbprofiler.log 2>&1' :::: {input_data}"
         return cmd
 
     def _single_collate(self, input_data):

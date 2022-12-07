@@ -145,7 +145,7 @@ def test_reads_exist_fail():
      
 
 
-DATA = collections.namedtuple('Data', ['input_data', 'jobs', 'db', 'keep', 'keep_bam'])
+DATA = collections.namedtuple('Data', ['input_data', 'jobs', 'db', 'keep', 'keep_bam','exclude_not_reportable'])
 
 
 def test_generate_cmd_batch_success():
@@ -153,24 +153,25 @@ def test_generate_cmd_batch_success():
     assert True when non-empty string is given
     """
     with patch.object(AmrSetup, "__init__", lambda x: None):
-        args = DATA(f"{test_folder / 'isolates.tab'}", 3, '--db tbdb',False,False)
-        # print(args)
+        args = DATA(f"{test_folder / 'isolates.tab'}", 3, '--db tbdb',False,False,False)
+        print(args)
         amr_obj = RunProfiler(args)
         amr_obj.logger = logging.getLogger(__name__)
 
-        assert amr_obj._batch_cmd(input_data=args.input_data) == f"parallel --colsep '\\t' -j {args.jobs} 'tb-profiler profile --read1 {{2}} --read2 {{3}} {args.db} --prefix {{1}} --dir {{1}} --no_trim --call_whole_genome --threads 1 --caller bcftools >> {{1}}/tbprofiler.log 2>&1' :::: {args.input_data}"
+        assert amr_obj._batch_cmd(input_data=args.input_data) == f"parallel --colsep '\\t' -j {args.jobs} 'tb-profiler profile --read1 {{2}} --read2 {{3}} {args.db} --prefix {{1}} --dir {{1}} --min_depth 20 --no_trim --call_whole_genome --threads 1 >> {{1}}/tbprofiler.log 2>&1' :::: {args.input_data}"
 
 
 # testing collation
-# DATA = collections.namedtuple('Data', ['input_file', 'jobs', 'db', 'keep', 'keep_bam'])
+Input = collections.namedtuple('Input', 'isolates  exclude_not_reportable')
+                
 def test_check_output_file_profile_success():
     """
     assert True when the tb-profiler output is present
     """
     with patch.object(AmrSetup, "__init__", lambda x: None):
-        isolates = ['tests']
+        to_input = Input(['test'], False) 
         # print(args)
-        amr_obj = Inferrence(isolates)
+        amr_obj = Inferrence(to_input)
         amr_obj.logger = logging.getLogger(__name__)
         amr_obj._cwd = pathlib.Path(__file__).parent.parent
 
