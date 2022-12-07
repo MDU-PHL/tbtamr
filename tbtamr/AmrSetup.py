@@ -17,7 +17,8 @@ class AmrSetup(Tbtamr):
         self.database_path = args.database_path
         self.keep = args.keep
         self.keep_bam = args.keep_bam
-        
+        self.exclude_not_reportable = args.exclude_not_reportable
+
     def _check_prefix(self):
         """
         If running type is not batch, then check that prefix is present and a string
@@ -153,8 +154,8 @@ class AmrSetup(Tbtamr):
         elif not self.keep and not self.keep_bam:
             logger.info(f"You have not decided to keep accesory files. All accessory and intermediate files will be removed following successful completion of tbTAMR.")
         
-        Data = collections.namedtuple('Data', ['input_data', 'jobs', 'db', 'keep','keep_bam'])
-        input_data = Data(self.input_data, jobs, database, self.keep, self.keep_bam)
+        Data = collections.namedtuple('Data', ['input_data', 'jobs', 'db', 'keep','keep_bam', 'exclude_not_reportable'])
+        input_data = Data(self.input_data, jobs, database, self.keep, self.keep_bam, self.exclude_not_reportable)
         
         return input_data
     

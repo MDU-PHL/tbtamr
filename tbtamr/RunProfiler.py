@@ -1,6 +1,6 @@
 
 import pathlib, subprocess, subprocess,re
-
+from collections import namedtuple
 from tbtamr.CustomLog import logger
 from tbtamr.TbTamr import Tbtamr
 
@@ -17,6 +17,7 @@ class RunProfiler(Tbtamr):
         self.jobs = args.jobs
         self.keep = args.keep
         self.keep_bam = args.keep_bam
+        self.exclude_not_reportable = args.exclude_not_reportable
         # self.qc_min_cov = args.qc_min_cov
         # self.qc_perc_mapped = args.qc_perc_mapped
         # self.logger = self._get_logger()
@@ -130,7 +131,11 @@ class RunProfiler(Tbtamr):
         # clean up
                 self._tidy_tbp()
                 self._remove(keep_bam=self.keep_bam, keep = self.keep)
-                return isolates
+                Input = namedtuple('Input', 'isolates  exclude_not_reportable')
+                to_input = Input(isolates, self.exclude_not_reportable) 
+        
+                return to_input
+                
         
         logger.critical(f"Something seems to be wrong with your run of tbTAMR. Please try again.")
 

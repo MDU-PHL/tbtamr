@@ -2,7 +2,7 @@
 import json
 
 from os import path
-
+from collections import namedtuple
 import pandas, pathlib
 pandas.options.mode.chained_assignment = None
 
@@ -15,7 +15,8 @@ class Parse(Tbtamr):
     def __init__(self,args):
         super().__init__()
         self.isolates = self._extract_isolates(args.isolates)
-    
+        self.exclude_not_reportable = args.exclude_not_reportable
+
     def _fail_isolate_dict(self,seq_id, step):
 
         logger.warning(f"Files for the tb-profiler {step} for sample {seq_id} are missing.")
@@ -59,8 +60,11 @@ class Parse(Tbtamr):
                 raise SystemExit
     
     def extract_inputs(self):
-
-        return self.isolates
+        
+        Input = namedtuple('Input', 'isolates  exclude_not_reportable')
+        to_input = Input(self.isolates, self.exclude_not_reportable) 
+        
+        return to_input
 
 class Inferrence(Tbtamr):
 
@@ -70,12 +74,13 @@ class Inferrence(Tbtamr):
     
     def __init__(self,args):
         super().__init__()
-        self.isolates = args
+        self.isolates = args.isolates
         self.db_path = f"{pathlib.Path(__file__).parent.parent /'tbtamr' /'db' / 'tbtamr_db_latest.json'}"
         self.db = self._get_db(path = self.db_path)
         self.drugs = self._get_drugs()
         self.low_level = self._get_low_level()
         self.not_reportable = self._get_not_reportable()
+        self.exclude_not_reportable = args.exclude_not_reportable
         
     def _get_db(self,path):
 
@@ -272,6 +277,7 @@ class Inferrence(Tbtamr):
         k = f"{drug}_{mut}"
         if mut != 'No mechanism identified':
             return interp[self.db[k]['Confers']]
+            
         else:
             return 'Susceptible'
     
@@ -283,6 +289,18 @@ class Inferrence(Tbtamr):
         else:
             return ''
 
+    def _check_mut(self, drug, mut):
+
+        if f"{drug}_{mut}" in self.db:
+            return mut
+        else:
+            gene = mut.split('_')[0]
+            if gene in ['ethA','katG','thyA','pncA','gid'] and 'del' in mut:
+                return f"{gene}_large_deletion"
+            else:
+                logger.critical(f"There is a problem with the mutation reported - it is not in the database of expected mutations. Please leave an issue on github")
+                raise SystemExit
+
 
     def _inference_of_drugs(self, res, drug):
         
@@ -292,7 +310,7 @@ class Inferrence(Tbtamr):
             if i in ["-", "*-","-*"]:
                 mut = 'No mechanism identified'
             else:
-                mut = i.strip('*')
+                mut = self._check_mut(mut = i.strip('*'), drug = drug)
             _d = {  'mutation':mut, 
                     'confidence':self._get_confidence(drug = drug, mut = mut),
                     'interpretation':self._get_interpret(drug = drug, mut = mut)}
@@ -394,7 +412,8 @@ class Inferrence(Tbtamr):
 
     def _wrangle_json(self,res):
 
-        
+        levs = ['Low-level resistant','Resistant'] if self.exclude_not_reportable else ['Low-level resistant','Resistant','Not-reportable','Resistant only in combination']
+
         for drug in self.drugs:
             dr = res[self.drugs[drug]]
             
@@ -402,8 +421,8 @@ class Inferrence(Tbtamr):
             for d in dr:
                 
                 mt = d['mutation']
-                interp = d['interpretation'] if d['interpretation'] in ['Low-level resistant','Resistant'] else 'Susceptible'
-                conf = d['confidence'] if d['interpretation'] in ['Low-level resistant','Resistant'] else ''
+                interp = d['interpretation'] if d['interpretation'] in levs else 'Susceptible'
+                conf = d['confidence'] if d['interpretation'] in levs else ''
                 if mt == 'No mechanism identified':
                     data.append(mt)
                 else:
