@@ -18,6 +18,7 @@ class RunProfiler(Tbtamr):
         self.keep = args.keep
         self.keep_bam = args.keep_bam
         self.exclude_not_reportable = args.exclude_not_reportable
+        self.min_depth = args.min_depth
         # self.qc_min_cov = args.qc_min_cov
         # self.qc_perc_mapped = args.qc_perc_mapped
         # self.logger = self._get_logger()
@@ -73,11 +74,11 @@ class RunProfiler(Tbtamr):
         self._run_cmd(cmd=cmd)
 
     def _single_cmd(self, input_data):
-        cmd = f"tb-profiler profile --read1 {input_data['R1']} --read2 {input_data['R2']} {self.database} --prefix {input_data['Seq_ID']} --dir {input_data['Seq_ID']} --min_depth 20 --no_trim --call_whole_genome --threads {self.jobs} >> {input_data['Seq_ID']}/tbprofiler.log 2>&1"
+        cmd = f"tb-profiler profile --read1 {input_data['R1']} --read2 {input_data['R2']} {self.database} --prefix {input_data['Seq_ID']} --dir {input_data['Seq_ID']} --min_depth {self.min_depth} --no_trim --call_whole_genome --threads {self.jobs} >> {input_data['Seq_ID']}/tbprofiler.log 2>&1"
         return cmd
 
     def _batch_cmd(self, input_data):
-        cmd = f"parallel --colsep '\\t' -j {self.jobs} 'tb-profiler profile --read1 {{2}} --read2 {{3}} {self.database} --prefix {{1}} --dir {{1}} --min_depth 20 --no_trim --call_whole_genome --threads 1 >> {{1}}/tbprofiler.log 2>&1' :::: {input_data}"
+        cmd = f"parallel --colsep '\\t' -j {self.jobs} 'tb-profiler profile --read1 {{2}} --read2 {{3}} {self.database} --prefix {{1}} --dir {{1}} --min_depth {self.min_depth} --no_trim --call_whole_genome --threads 1 >> {{1}}/tbprofiler.log 2>&1' :::: {input_data}"
         return cmd
 
     def _single_collate(self, input_data):

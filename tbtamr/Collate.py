@@ -275,16 +275,16 @@ class Inferrence(Tbtamr):
                    'combo-resistance': 'Resistant only in combination'
                     }
         k = f"{drug}_{mut}"
-        if mut != 'No mechanism identified':
+        if 'No mechanism identified' not in mut:
             return interp[self.db[k]['Confers']]
             
         else:
             return 'Susceptible'
     
     def _get_confidence(self, drug, mut):
-
+        
         k = f"{drug}_{mut}"
-        if mut != 'No mechanism identified':
+        if 'No mechanism identified' not in mut:
             return self.db[k]['Confidence_tbtamr']
         else:
             return ''
@@ -298,8 +298,8 @@ class Inferrence(Tbtamr):
             if gene in ['ethA','katG','thyA','pncA','gid'] and 'del' in mut:
                 return f"{gene}_large_deletion"
             else:
-                logger.critical(f"There is a problem with the mutation reported - it is not in the database of expected mutations. Please leave an issue on github")
-                raise SystemExit
+                logger.critical(f"There is a problem with the mutation reported {mut} - it is not in the database of expected mutations. This will not be reported. Please leave an issue on github")
+                return "No mechanism identified*"
 
 
     def _inference_of_drugs(self, res, drug):
@@ -508,18 +508,20 @@ class Mdu(Inferrence):
     def _get_infer_conf(self, _dict, drug):
 
         reportable = ['Low-level resistant','Resistant']
-
-        interp = [i['interpretation'] for i in _dict[self.drugs[drug]] if i['interpretation'] in reportable]
-        conf = [i['confidence'] for i in _dict[self.drugs[drug]]]
-        mut = ';'.join([i['mutation'] for i in _dict[self.drugs[drug]] if i['interpretation'] in reportable])
-        if interp != []:
-            interpretation = sorted(interp)[-1]
-            confidence = sorted(conf)[0]
+        if _dict['Species'] == 'Mycobacterium tuberculosis':
+            interp = [i['interpretation'] for i in _dict[self.drugs[drug]] if i['interpretation'] in reportable]
+            conf = [i['confidence'] for i in _dict[self.drugs[drug]]]
+            mut = ';'.join([i['mutation'] for i in _dict[self.drugs[drug]] if i['interpretation'] in reportable])
+            if interp != []:
+                interpretation = sorted(interp)[-1]
+                confidence = sorted(conf)[0]
+            else:
+                interpretation = 'Susceptible'
+                confidence = ''
+                mut = "No mechanism identified"
         else:
-            interpretation = 'Susceptible'
+            mut = interpretation = 'Not reportable'
             confidence = ''
-            mut = "No mechanism identified"
-
         
         return mut,interpretation,confidence
 

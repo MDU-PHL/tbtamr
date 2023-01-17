@@ -87,6 +87,11 @@ def set_parsers():
         help="The percentage of sequences mapped to the H37rV for QC"
     )
     parser_sub_run.add_argument(
+        "--min_depth", 
+        default=20, 
+        help="The depth required at individual sites to call a base. STRONGLY recommended not to change this setting"
+    )
+    parser_sub_run.add_argument(
         "--database_prefix", 
         "-db_prefix", 
         default="tbtamr", 

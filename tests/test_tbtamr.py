@@ -145,7 +145,7 @@ def test_reads_exist_fail():
      
 
 
-DATA = collections.namedtuple('Data', ['input_data', 'jobs', 'db', 'keep', 'keep_bam','exclude_not_reportable'])
+DATA = collections.namedtuple('Data', ['input_data', 'jobs', 'db', 'keep', 'keep_bam','exclude_not_reportable', 'min_depth'])
 
 
 def test_generate_cmd_batch_success():
@@ -153,7 +153,7 @@ def test_generate_cmd_batch_success():
     assert True when non-empty string is given
     """
     with patch.object(AmrSetup, "__init__", lambda x: None):
-        args = DATA(f"{test_folder / 'isolates.tab'}", 3, '--db tbdb',False,False,False)
+        args = DATA(f"{test_folder / 'isolates.tab'}", 3, '--db tbdb',False,False,False,20)
         print(args)
         amr_obj = RunProfiler(args)
         amr_obj.logger = logging.getLogger(__name__)
