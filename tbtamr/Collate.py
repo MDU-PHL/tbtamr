@@ -115,7 +115,7 @@ class Inferrence(Tbtamr):
             header =  [
                 "Seq_ID",
                 "Species",
-                "Phylogenetic lineage",
+                "Identification (WGS)",
                 'Predicted drug resistance',
                 "Rifampicin",
                 "Rifampicin - Interpretation",
@@ -275,7 +275,10 @@ class Inferrence(Tbtamr):
                    'combo-resistance': 'Resistant only in combination'
                     }
         k = f"{drug}_{mut}"
+        
         if 'No mechanism identified' not in mut:
+            print(k)
+            print(interp[self.db[k]['Confers']])
             return interp[self.db[k]['Confers']]
             
         else:
@@ -358,8 +361,7 @@ class Inferrence(Tbtamr):
                     score = score + inh
                 elif drug in fline_b and any(item in interp for item in ['Low-level resistant','Resistant']):
                     score = score + fline_score
-        
-        resistance = 'No drug resistance predicted'
+        resistance = 'No first-line drug resistance predicted'
         if score >=8 and flq_score == True and other_score == False:
             resistance = 'Pre-Extensive/Extensive drug-resistance predicted'
         elif score >=8 and flq_score == True and other_score == True:
@@ -368,7 +370,7 @@ class Inferrence(Tbtamr):
             resistance = f'Mono-resistance predicted{rf}'
         elif score in [2,4,5,9,10]: # more than one first line drug where INH OR RIF can be present
             resistance = f'Poly-resistance predicted{rf}'
-        elif score >=11 and flq_score == False and other_score == False:
+        elif score >=11 and flq_score == False:
             resistance = 'Multi-drug resistance predicted (MDR-TB)'
         
                        
