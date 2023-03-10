@@ -19,22 +19,9 @@ class RunProfiler(Tbtamr):
         self.keep_bam = args.keep_bam
         self.exclude_not_reportable = args.exclude_not_reportable
         self.min_depth = args.min_depth
-        # self.qc_min_cov = args.qc_min_cov
-        # self.qc_perc_mapped = args.qc_perc_mapped
-        # self.logger = self._get_logger()
-        # self.input_data = args
+        self.prop_mtb = args.prop_mtb
+        self.min_cov = args.min_cov
         
-
-    # def _single_cmd(self):
-    #     cmd = f"mkdir -p {self.prefix} && tb-profiler profile --read1 {self.read1} --read2 {self.read2} --db {self.database} --prefix {self.prefix} --dir {self.prefix} --csv --call_whole_genome --no_trim --threads {self.jobs} > {self.prefix}/tbprofiler.log 2>&1"
-    #     return cmd
-
-    # def _single_collate(self):
-    #     cmd = f"tb-profiler collate -d {self.prefix}/results/ --db {self.database} -p {self.prefix}/tb-profiler_report --full --all_variants --mark_missing"
-    #     return cmd
-
-    
-
     def _get_isolates(self):
 
         isolates = {}
@@ -132,8 +119,8 @@ class RunProfiler(Tbtamr):
         # clean up
                 self._tidy_tbp()
                 self._remove(keep_bam=self.keep_bam, keep = self.keep)
-                Input = namedtuple('Input', 'isolates  exclude_not_reportable')
-                to_input = Input(isolates, self.exclude_not_reportable) 
+                Input = namedtuple('Input', ['isolates',  'exclude_not_reportable','min_depth','min_cov', 'prop_mtb'])
+                to_input = Input(isolates, self.exclude_not_reportable,self.min_cov, self.prop_mtb) 
         
                 return to_input
                 

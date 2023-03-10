@@ -19,6 +19,8 @@ class AmrSetup(Tbtamr):
         self.keep_bam = args.keep_bam
         self.exclude_not_reportable = args.exclude_not_reportable
         self.min_depth = args.min_depth
+        self.prop_mtb = args.prop_mtb
+        self.min_cov = args.min_cov
 
     def _check_prefix(self):
         """
@@ -155,8 +157,8 @@ class AmrSetup(Tbtamr):
         elif not self.keep and not self.keep_bam:
             logger.info(f"You have not decided to keep accesory files. All accessory and intermediate files will be removed following successful completion of tbTAMR.")
         
-        Data = collections.namedtuple('Data', ['input_data', 'jobs', 'db', 'keep','keep_bam', 'exclude_not_reportable', 'min_depth'])
-        input_data = Data(self.input_data, jobs, database, self.keep, self.keep_bam, self.exclude_not_reportable, self.min_depth)
+        Data = collections.namedtuple('Data', ['input_data', 'jobs', 'db', 'keep','keep_bam', 'exclude_not_reportable', 'min_depth','min_cov', 'prop_mtb'])
+        input_data = Data(self.input_data, jobs, database, self.keep, self.keep_bam, self.exclude_not_reportable, self.min_depth, self.min_cov, self.prop_mtb)
         
         return input_data
     

@@ -16,6 +16,8 @@ class Parse(Tbtamr):
         super().__init__()
         self.isolates = self._extract_isolates(args.isolates)
         self.exclude_not_reportable = args.exclude_not_reportable
+        self.prop_mtb = args.prop_mtb
+        self.min_cov = args.min_cov
 
     def _fail_isolate_dict(self,seq_id, step):
 
@@ -25,7 +27,6 @@ class Parse(Tbtamr):
             raise SystemExit
 
     def _get_isolate_dict(self, isos):
-        # pass
         
         isolates = {}
         for i in isos:
@@ -48,7 +49,6 @@ class Parse(Tbtamr):
             try:
                 with open(_input, 'r') as f:
                     isos = f.read().strip().split('\n')
-                    print(isos)
                     if isinstance(isos, list) and len(isos)>1:
                         isolates = self._get_isolate_dict(isos = isos)
                         return isolates
@@ -81,6 +81,8 @@ class Inferrence(Tbtamr):
         self.low_level = self._get_low_level()
         self.not_reportable = self._get_not_reportable()
         self.exclude_not_reportable = args.exclude_not_reportable
+        self.prop_mtb = args.prop_mtb
+        self.min_cov = args.min_cov
         
     def _get_db(self,path):
 
@@ -115,7 +117,7 @@ class Inferrence(Tbtamr):
             header =  [
                 "Seq_ID",
                 "Species",
-                "Identification (WGS)",
+                "Phylogenetic lineage",
                 'Predicted drug resistance',
                 "Rifampicin",
                 "Rifampicin - Interpretation",
@@ -165,7 +167,8 @@ class Inferrence(Tbtamr):
                 "Linezolid",
                 "Linezolid - Interpretation",
                 "Linezolid - Confidence",
-                "Database version"
+                "Quality",
+                "Database version",
             ]
         else:
             header =  [
@@ -191,6 +194,7 @@ class Inferrence(Tbtamr):
                 "Linezolid",
                 "Median genome coverage",
                 "Percentage reads mapped",
+                "Quality",
                 "Database version"
             ]
 
@@ -232,7 +236,8 @@ class Inferrence(Tbtamr):
                 return True
             else:
                 logger.critical(f"There seems to have been an error opening {path}. The following error was reported {err}")
-    
+                raise SystemExit
+            
     def _save_json(self, _data, _path):
 
         
@@ -267,28 +272,41 @@ class Inferrence(Tbtamr):
         self._save_csv(_data,prefix, 'general')
         self._save_json(_data,prefix)
 
-    def _get_interpret(self, drug, mut):
+    def _check_quality(self, cov, perc):
+        
+        if cov >= self.min_cov and perc >= self.prop_mtb:
 
-        interp = {'resistance': 'Resistant',
-                   'low_level': 'Low-level resistant',
-                   'not_reportable': 'Not-reportable',
-                   'combo-resistance': 'Resistant only in combination'
-                    }
-        k = f"{drug}_{mut}"
-        
-        if 'No mechanism identified' not in mut:
-            print(k)
-            print(interp[self.db[k]['Confers']])
-            return interp[self.db[k]['Confers']]
-            
+            return 'Pass QC'
         else:
-            return 'Susceptible'
+            return 'Fail QC' 
+
+    def _get_interpret(self, drug, mut, qual):
+
+        if 'Fail' not in qual:
+            interp = {'resistance': 'Resistant',
+                    'low_level': 'Low-level resistant',
+                    'not_reportable': 'Not-reportable',
+                    'combo-resistance': 'Resistant only in combination'
+                        }
+            k = f"{drug}_{mut}"
+            
+            if 'No mechanism identified' not in mut:
+                return interp[self.db[k]['Confers']]
+                
+            else:
+                return 'Susceptible'
+        else:
+            return ''
     
-    def _get_confidence(self, drug, mut):
+    def _get_confidence(self, drug, mut, qual):
         
-        k = f"{drug}_{mut}"
-        if 'No mechanism identified' not in mut:
-            return self.db[k]['Confidence_tbtamr']
+        if not 'Fail' in qual:
+            
+            k = f"{drug}_{mut}"
+            if 'No mechanism identified' not in mut:
+                return self.db[k]['Confidence_tbtamr']
+            else:
+                return ''
         else:
             return ''
 
@@ -305,7 +323,7 @@ class Inferrence(Tbtamr):
                 return "No mechanism identified*"
 
 
-    def _inference_of_drugs(self, res, drug):
+    def _inference_of_drugs(self, res, drug, qual):
         
         result = []
         inds = [i.strip() for i in res.split(',')]
@@ -314,69 +332,67 @@ class Inferrence(Tbtamr):
                 mut = 'No mechanism identified'
             else:
                 mut = self._check_mut(mut = i.strip('*'), drug = drug)
-            _d = {  'mutation':mut, 
-                    'confidence':self._get_confidence(drug = drug, mut = mut),
-                    'interpretation':self._get_interpret(drug = drug, mut = mut)}
+            _d = {  'mutation':mut if 'Fail' not in qual else qual, 
+                    'confidence':self._get_confidence(drug = drug, mut = mut, qual = qual),
+                    'interpretation':self._get_interpret(drug = drug, mut = mut, qual = qual)}
             result.append(_d)
         
         return result
 
-    def _infer_drugs(self, tbp_result, seq_id):
+    def _infer_drugs(self, tbp_result, seq_id, qual):
 
         _d = {'Seq_ID':seq_id}
         
         for drug in self.drugs:
             logger.info(f"Checking {drug}")
-            _d[self.drugs[drug]] = self._inference_of_drugs(res = tbp_result[seq_id][drug], drug = drug)
+            _d[self.drugs[drug]] = self._inference_of_drugs(res = tbp_result[seq_id][drug], drug = drug, qual = qual)
         
         return _d
     
-    def _infer_dr_profile(self, res):
+    def _infer_dr_profile(self, res, qual):
         
-        # print(res)
-        fline_b = ['pyrazinamide','ethambutol']
-        flq = ['ofloxacin','moxifloxacin','levofloxacin']
-        other_groupA = ["bedaquiline","linezolid","delamanid"]
-        score = 0
-        other_score = False
-        flq_score = False
-        inh = 3
-        rif = 8
-        fline_score = 1
-        rf = ''
-        
-        
-        for drug in self.drugs:
-            if 'No mechanism identified' not in res[self.drugs[drug]][0]['mutation']:
-                # get the interpretations from the results
-                interp = [i['interpretation'] for i in res[self.drugs[drug]]]
-                if drug in flq and any(item in interp for item in ['Low-level resistant','Resistant']):
-                    flq_score = True
-                if drug in other_groupA and any(item in interp for item in ['Low-level resistant','Resistant']):
-                    other_score = True
-                if drug == 'rifampicin' and any(item in interp for item in ['Low-level resistant','Resistant']):
-                    rf = ' (RR-TB)'
-                    score = score + rif
-                elif drug == 'isoniazid' and any(item in interp for item in ['Low-level resistant','Resistant']):
-                    score = score + inh
-                elif drug in fline_b and any(item in interp for item in ['Low-level resistant','Resistant']):
-                    score = score + fline_score
-        resistance = 'No first-line drug resistance predicted'
-        if score >=8 and flq_score == True and other_score == False:
-            resistance = 'Pre-Extensive/Extensive drug-resistance predicted'
-        elif score >=8 and flq_score == True and other_score == True:
-            resistance = 'Pre-Extensive/Extensive drug-resistance predicted'
-        elif score in [1,3,8]: # one first line drug
-            resistance = f'Mono-resistance predicted{rf}'
-        elif score in [2,4,5,9,10]: # more than one first line drug where INH OR RIF can be present
-            resistance = f'Poly-resistance predicted{rf}'
-        elif score >=11 and flq_score == False:
-            resistance = 'Multi-drug resistance predicted (MDR-TB)'
-        
-                       
+        if 'Fail' not in qual:
+            fline_b = ['pyrazinamide','ethambutol']
+            flq = ['ofloxacin','moxifloxacin','levofloxacin']
+            other_groupA = ["bedaquiline","linezolid","delamanid"]
+            score = 0
+            other_score = False
+            flq_score = False
+            inh = 3
+            rif = 8
+            fline_score = 1
+            rf = ''
+            
+            for drug in self.drugs:
+                if 'No mechanism identified' not in res[self.drugs[drug]][0]['mutation']:
+                    # get the interpretations from the results
+                    interp = [i['interpretation'] for i in res[self.drugs[drug]]]
+                    if drug in flq and any(item in interp for item in ['Low-level resistant','Resistant']):
+                        flq_score = True
+                    if drug in other_groupA and any(item in interp for item in ['Low-level resistant','Resistant']):
+                        other_score = True
+                    if drug == 'rifampicin' and any(item in interp for item in ['Low-level resistant','Resistant']):
+                        rf = ' (RR-TB)'
+                        score = score + rif
+                    elif drug == 'isoniazid' and any(item in interp for item in ['Low-level resistant','Resistant']):
+                        score = score + inh
+                    elif drug in fline_b and any(item in interp for item in ['Low-level resistant','Resistant']):
+                        score = score + fline_score
+            resistance = 'No first-line drug resistance predicted'
+            if score >=8 and flq_score == True and other_score == False:
+                resistance = 'Pre-Extensive/Extensive drug-resistance predicted'
+            elif score >=8 and flq_score == True and other_score == True:
+                resistance = 'Pre-Extensive/Extensive drug-resistance predicted'
+            elif score in [1,3,8]: # one first line drug
+                resistance = f'Mono-resistance predicted{rf}'
+            elif score in [2,4,5,9,10]: # more than one first line drug where INH OR RIF can be present
+                resistance = f'Poly-resistance predicted{rf}'
+            elif score >=11 and flq_score == False:
+                resistance = 'Multi-drug resistance predicted (MDR-TB)'
+            res['Predicted drug resistance'] = f"{resistance}"
+        else:
+            res['Predicted drug resistance'] = qual
 
-        res['Predicted drug resistance'] = f"{resistance}"
-        
         return res
 
     def _species(self,res, seq_id):
@@ -470,13 +486,17 @@ class Inferrence(Tbtamr):
             if for_collate:
                 tbp_result = self._open_json(path = self.isolates[isolate]['collate'])
                 raw_result = self._open_json(path = self.isolates[isolate]['profile'])
-                _dict = self._infer_drugs(tbp_result = tbp_result,seq_id=isolate)
-                _dict = self._infer_dr_profile(res = _dict)
-                _dict['Species'] = self._species(res = tbp_result, seq_id=isolate)
-                _dict['Phylogenetic lineage'] = self._lineage(res = tbp_result, seq_id=isolate)
+                med_cov = self._get_qc_feature(seq_id = isolate, res =tbp_result, val = 'median_coverage')
+                perc_mtb = self._get_qc_feature(seq_id = isolate,res = tbp_result, val = 'pct_reads_mapped')
+                qual = self._check_quality(cov = med_cov,mtb = perc_mtb)
+                _dict['Quality'] = qual
+                _dict['Median genome coverage'] = med_cov
+                _dict['Percentage reads mapped'] = perc_mtb
+                _dict = self._infer_drugs(tbp_result = tbp_result,seq_id=isolate, qual = qual)
+                _dict = self._infer_dr_profile(res = _dict,qual = qual)
+                _dict['Species'] = self._species(res = tbp_result, seq_id=isolate) if qual != 'Fail QC' else qual
+                _dict['Phylogenetic lineage'] = self._lineage(res = tbp_result, seq_id=isolate) if qual != 'Fail QC' else qual
                 _dict['Database version'] = self._db_version(res = raw_result)
-                _dict['Median genome coverage'] = self._get_qc_feature(seq_id = isolate, res =tbp_result, val = 'median_coverage')
-                _dict['Percentage reads mapped'] = self._get_qc_feature(seq_id = isolate,res = tbp_result, val = 'pct_reads_mapped')
                 logger.info(f"Saving results for {isolate}.")
                 # saving 'raw' result as json file
                 self._save_json(_data = [_dict], _path = f"{isolate}/tbtamr")

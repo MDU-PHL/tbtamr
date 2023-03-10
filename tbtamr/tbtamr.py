@@ -119,6 +119,19 @@ def set_parsers():
         help = 'Only report Resistant and Low-level resistant conferring mutations.'
     )
 
+    parser_sub_run.add_argument(
+        '--min_cov',
+        '-m',
+        help="Minimum median genome coverage",
+        default= 40
+    )
+
+    parser_sub_run.add_argument(
+        '--prop_mtb',
+        help="Minimum proportion M.tb",
+        default= 80
+    )
+    
     parser_sub_collate.add_argument(
         '--isolates',
         '-i',
@@ -128,6 +141,17 @@ def set_parsers():
         '--exclude_not_reportable', 
         action = 'store_true', 
         help = 'Only report Resistant and Low-level resistant conferring mutations.'
+    )
+    parser_sub_collate.add_argument(
+        '--min_cov',
+        '-m',
+        help="Minimum median genome coverage",
+        default= 40
+    )
+    parser_sub_collate.add_argument(
+        '--prop_mtb',
+        help="Minimum proportion M.tb",
+        default= 80
     )
 
     parser_sub_mdu.add_argument(
