@@ -61,8 +61,8 @@ class Parse(Tbtamr):
     
     def extract_inputs(self):
         
-        Input = namedtuple('Input', 'isolates  exclude_not_reportable')
-        to_input = Input(self.isolates, self.exclude_not_reportable) 
+        Input = namedtuple('Input', ['isolates'  ,'exclude_not_reportable', 'prop_mtb','min_cov'])
+        to_input = Input(self.isolates, self.exclude_not_reportable, self.prop_mtb, self.min_cov) 
         
         return to_input
 
@@ -226,7 +226,7 @@ class Inferrence(Tbtamr):
    
     
     def _open_json(self, path, for_appending = False):
-
+        # print(path)
         try:
             with open(f"{path}", 'r') as f:
                 results = json.load(f)
@@ -283,6 +283,7 @@ class Inferrence(Tbtamr):
     def _get_interpret(self, drug, mut, qual):
 
         if 'Fail' not in qual:
+            
             interp = {'resistance': 'Resistant',
                     'low_level': 'Low-level resistant',
                     'not_reportable': 'Not-reportable',
@@ -301,7 +302,7 @@ class Inferrence(Tbtamr):
     def _get_confidence(self, drug, mut, qual):
         
         if not 'Fail' in qual:
-            
+            logger.info(f"Sequence passed QC.")
             k = f"{drug}_{mut}"
             if 'No mechanism identified' not in mut:
                 return self.db[k]['Confidence_tbtamr']
@@ -335,6 +336,7 @@ class Inferrence(Tbtamr):
             _d = {  'mutation':mut if 'Fail' not in qual else qual, 
                     'confidence':self._get_confidence(drug = drug, mut = mut, qual = qual),
                     'interpretation':self._get_interpret(drug = drug, mut = mut, qual = qual)}
+            # print(_d)
             result.append(_d)
         
         return result
@@ -364,6 +366,8 @@ class Inferrence(Tbtamr):
             rf = ''
             
             for drug in self.drugs:
+                # print(drug)
+                # print(res[self.drugs[drug]])
                 if 'No mechanism identified' not in res[self.drugs[drug]][0]['mutation']:
                     # get the interpretations from the results
                     interp = [i['interpretation'] for i in res[self.drugs[drug]]]
@@ -429,23 +433,24 @@ class Inferrence(Tbtamr):
         return res[seq_id][val]
 
     def _wrangle_json(self,res):
-
+        # print(res)
         levs = ['Low-level resistant','Resistant'] if self.exclude_not_reportable else ['Low-level resistant','Resistant','Not-reportable','Resistant only in combination']
-
+        # print(res)
         for drug in self.drugs:
             dr = res[self.drugs[drug]]
             
-            data = []
+            data = set()
             for d in dr:
                 
                 mt = d['mutation']
-                interp = d['interpretation'] if d['interpretation'] in levs else 'Susceptible'
+                interp = d['interpretation'] if d['interpretation'] in levs or d['interpretation'] == ''  else 'Susceptible'
                 conf = d['confidence'] if d['interpretation'] in levs else ''
-                if mt == 'No mechanism identified':
-                    data.append(mt)
+                if mt == 'No mechanism identified' or 'Fail' in mt:
+                    data.add(mt)
                 else:
-                    data.append(f"{mt} ({interp}|{conf})")
-            res[self.drugs[drug]] = ';'.join(data)
+                    data.add(f"{mt} ({interp}|{conf})")
+            res[self.drugs[drug]] = ';'.join(list(data))
+        
         logger.info(f"Saving a wide format csv for {res['Seq_ID']}")
         self._save_csv(_data = res, _path = f"{res['Seq_ID']}/tbtamr", _type = 'general')
         
@@ -480,29 +485,34 @@ class Inferrence(Tbtamr):
         
         logger.info(f"Now inferring resistance profiles")
         results = []
+        # print(self.isolates)
         for isolate in self.isolates:
             logger.info(f"Working on {isolate}")
             for_collate = self._check_output_file(seq_id=isolate, step = 'collate')
             if for_collate:
+                # _dict = {}
                 tbp_result = self._open_json(path = self.isolates[isolate]['collate'])
                 raw_result = self._open_json(path = self.isolates[isolate]['profile'])
                 med_cov = self._get_qc_feature(seq_id = isolate, res =tbp_result, val = 'median_coverage')
                 perc_mtb = self._get_qc_feature(seq_id = isolate,res = tbp_result, val = 'pct_reads_mapped')
-                qual = self._check_quality(cov = med_cov,mtb = perc_mtb)
-                _dict['Quality'] = qual
-                _dict['Median genome coverage'] = med_cov
-                _dict['Percentage reads mapped'] = perc_mtb
+                qual = self._check_quality(cov = med_cov,perc = perc_mtb)
+                
+                # print(_dict)
                 _dict = self._infer_drugs(tbp_result = tbp_result,seq_id=isolate, qual = qual)
                 _dict = self._infer_dr_profile(res = _dict,qual = qual)
                 _dict['Species'] = self._species(res = tbp_result, seq_id=isolate) if qual != 'Fail QC' else qual
                 _dict['Phylogenetic lineage'] = self._lineage(res = tbp_result, seq_id=isolate) if qual != 'Fail QC' else qual
                 _dict['Database version'] = self._db_version(res = raw_result)
+                _dict['Quality'] = qual
+                _dict['Median genome coverage'] = med_cov
+                _dict['Percentage reads mapped'] = perc_mtb
                 logger.info(f"Saving results for {isolate}.")
                 # saving 'raw' result as json file
                 self._save_json(_data = [_dict], _path = f"{isolate}/tbtamr")
                 # saving a single sample report - in csv format
                 self._single_report(_data = _dict)
                 # turn results into a format that is for generic use - larger tabular structure.
+                # print(_dict)
                 results.append(self._wrangle_json(res = _dict))
             
         logger.info(f"Saving collated data.")
@@ -533,7 +543,7 @@ class Mdu(Inferrence):
         if _dict['Species'] == 'Mycobacterium tuberculosis':
             interp = [i['interpretation'] for i in _dict[self.drugs[drug]] if i['interpretation'] in reportable]
             conf = [i['confidence'] for i in _dict[self.drugs[drug]]]
-            mut = ';'.join([i['mutation'] for i in _dict[self.drugs[drug]] if i['interpretation'] in reportable])
+            mut = ';'.join([i['mutation'].replace('_',' ') for i in _dict[self.drugs[drug]] if i['interpretation'] in reportable])
             if interp != []:
                 interpretation = sorted(interp)[-1]
                 confidence = sorted(conf)[0]
@@ -546,6 +556,13 @@ class Mdu(Inferrence):
             confidence = ''
         
         return mut,interpretation,confidence
+    
+    def _get_summary_res(self, res):
+
+        if not res['Species'] in ["Mycobacterium tuberculosis", "Fail QC"] :
+            return "Not reportable"
+        else:
+            return res["Predicted drug resistance"]
 
     def _mdu_infer(self, res):
         
@@ -571,6 +588,7 @@ class Mdu(Inferrence):
             if pathlib.Path(j).exists():
                 js = self._open_json(j)
                 _data = self._mdu_infer(res = js[0])
+                _data["Predicted drug resistance"] = self._get_summary_res(res = _data)
                 # print(_data)
                 res.append(_data)
         

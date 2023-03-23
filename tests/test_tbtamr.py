@@ -1,12 +1,17 @@
 import pytest,pathlib, logging,collections,json
+from unittest import TestCase
 from unittest.mock import patch, PropertyMock
 
 from tbtamr.AmrSetup import AmrSetup
 from tbtamr.RunProfiler import RunProfiler
-from tbtamr.Collate import Inferrence
+from tbtamr.Collate import Inferrence,Parse
+from tbtamr.TbTamr import Tbtamr
 
 test_folder = pathlib.Path(__file__).parent.parent / 'tests'
 tbp_res = json.load(open(f"{test_folder}/results/tb-profiler_report.json"))
+whoclass = json.load(open(f"{test_folder}/results/classification_truth.json"))
+data_folder = test_folder / 'results' /'data'
+data_folder_single  = data_folder / 'A'
 
 def test_file_present():
     """
@@ -407,4 +412,224 @@ def test_get_qual_fail_both():
 
         assert amr_obj._check_quality(cov = 35, perc = 79) == 'Fail QC'
 
-#         assert amr_obj._get_qc_feature(seq_id='sample_id',res = tbp_res,val = 'pct_reads_mapped') != 100
+def test_check_mutant_success():
+
+    with patch.object(AmrSetup, "__init__", lambda x: None):
+        to_input = Input(['test'], False, 80, 40) 
+        amr_obj = Inferrence(to_input)
+        amr_obj.logger = logging.getLogger(__name__)
+        # amr_obj.db = pathlib.Path(__file__).parent.parent /"db" /
+        drug = "ethambutol"
+        mut = "embB_p.Leu74Arg"
+
+        assert amr_obj._check_mut(drug = drug, mut=mut) == "embB_p.Leu74Arg"
+
+
+def test_check_mutant_success_large_deletion():
+
+    with patch.object(AmrSetup, "__init__", lambda x: None):
+        to_input = Input(['test'], False, 80, 40) 
+        amr_obj = Inferrence(to_input)
+        amr_obj.logger = logging.getLogger(__name__)
+        # amr_obj.db = pathlib.Path(__file__).parent.parent /"db" /
+        drug = "isoniazid"
+        mut = "katG_del"
+
+        assert amr_obj._check_mut(drug = drug, mut=mut) == "katG_large_deletion"
+
+
+def test_check_mutant_fail():
+
+    with patch.object(AmrSetup, "__init__", lambda x: None):
+        to_input = Input(['test'], False, 80, 40) 
+        amr_obj = Inferrence(to_input)
+        amr_obj.logger = logging.getLogger(__name__)
+        # amr_obj.db = pathlib.Path(__file__).parent.parent /"db" /
+        drug = "rifampicin"
+        mut = "rpoB_del"
+
+        assert amr_obj._check_mut(drug = drug, mut=mut) == "No mechanism identified*"
+
+
+def test_check_confidence_success():
+
+    with patch.object(AmrSetup, "__init__", lambda x: None):
+        to_input = Input(['test'], False, 80, 40) 
+        amr_obj = Inferrence(to_input)
+        amr_obj.logger = logging.getLogger(__name__)
+        # amr_obj.db = pathlib.Path(__file__).parent.parent /"db" /
+        drug = "ethambutol"
+        mut = "embB_p.Leu74Arg"
+
+        assert amr_obj._get_confidence(drug = drug, mut=mut,qual = "Pass qc") == "Moderate"
+
+def test_check_confidence_fail_qc():
+
+    with patch.object(AmrSetup, "__init__", lambda x: None):
+        to_input = Input(['test'], False, 80, 40) 
+        amr_obj = Inferrence(to_input)
+        amr_obj.logger = logging.getLogger(__name__)
+        # amr_obj.db = pathlib.Path(__file__).parent.parent /"db" /
+        drug = "ethambutol"
+        mut = "embB_p.Leu74Arg"
+
+        assert amr_obj._get_confidence(drug = drug, mut=mut,qual = "Fail qc") == ""
+
+
+def test_check_interpretation_success():
+
+    with patch.object(AmrSetup, "__init__", lambda x: None):
+        to_input = Input(['test'], False, 80, 40) 
+        amr_obj = Inferrence(to_input)
+        amr_obj.logger = logging.getLogger(__name__)
+        # amr_obj.db = pathlib.Path(__file__).parent.parent /"db" /
+        drug = "ethambutol"
+        mut = "embB_p.Leu74Arg"
+
+        assert amr_obj._get_interpret(drug = drug, mut=mut,qual = "Pass qc") == "Resistant"
+
+
+
+def test_check_interpretation_fail_qc():
+
+    with patch.object(AmrSetup, "__init__", lambda x: None):
+        to_input = Input(['test'], False, 80, 40) 
+        amr_obj = Inferrence(to_input)
+        amr_obj.logger = logging.getLogger(__name__)
+        # amr_obj.db = pathlib.Path(__file__).parent.parent /"db" /
+        drug = "ethambutol"
+        mut = "embB_p.Leu74Arg"
+
+        assert amr_obj._get_interpret(drug = drug, mut=mut,qual = "Fail qc") == ""
+
+
+def test_check_output_file_collate_success():
+
+    with patch.object(Tbtamr, "__init__", lambda x: None):
+        
+        amr_obj = Tbtamr()
+        amr_obj._cwd = data_folder
+        amr_obj.logger = logging.getLogger(__name__)
+        # amr_obj.db = pathlib.Path(__file__).parent.parent /"db" /
+        seq_id = "A"
+        step = "collate"
+
+
+        assert amr_obj._check_output_file(seq_id=seq_id, step = step) == f"{data_folder_single}/tb-profiler_report.json"
+
+
+
+def test_check_output_file_collate_fail():
+
+    with patch.object(Tbtamr, "__init__", lambda x: None):
+        
+        amr_obj = Tbtamr()
+        amr_obj._cwd = data_folder
+        amr_obj.logger = logging.getLogger(__name__)
+        # amr_obj.db = pathlib.Path(__file__).parent.parent /"db" /
+        seq_id = "Z"
+        step = "collate"
+
+        assert amr_obj._check_output_file(seq_id=seq_id, step = step) == False
+
+
+
+def test_check_output_file_profile_success():
+
+    with patch.object(Tbtamr, "__init__", lambda x: None):
+        
+        amr_obj = Tbtamr()
+        amr_obj._cwd = data_folder
+        
+        amr_obj.logger = logging.getLogger(__name__)
+        # amr_obj.db = pathlib.Path(__file__).parent.parent /"db" /
+        seq_id = "A"
+        step = "profile"
+
+
+        assert amr_obj._check_output_file(seq_id=seq_id, step = step) == f"{data_folder_single}/results/A.results.json"
+
+
+
+def test_check_output_file_collate_fail():
+
+    with patch.object(Tbtamr, "__init__", lambda x: None):
+        
+        amr_obj = Tbtamr()
+        amr_obj._cwd = data_folder
+        amr_obj.logger = logging.getLogger(__name__)
+        # amr_obj.db = pathlib.Path(__file__).parent.parent /"db" /
+        seq_id = "Z"
+        step = "profile"
+
+        assert amr_obj._check_output_file(seq_id=seq_id, step = step) == False
+
+def test_check_output_profile():
+
+    with patch.object(Tbtamr, "__init__", lambda x: None):
+        
+        amr_obj = Tbtamr()
+        amr_obj._cwd = data_folder
+        amr_obj.logger = logging.getLogger(__name__)
+        # amr_obj.db = pathlib.Path(__file__).parent.parent /"db" /
+        isolates = {"A":{}}
+        step = "profile"
+
+        assert amr_obj._check_output(isolates=isolates, step = step) == {"A":{'profile':f"{data_folder_single}/results/A.results.json"}}
+
+
+def test_check_output_collate():
+
+    with patch.object(Tbtamr, "__init__", lambda x: None):
+        
+        amr_obj = Tbtamr()
+        amr_obj._cwd = data_folder
+        amr_obj.logger = logging.getLogger(__name__)
+        # amr_obj.db = pathlib.Path(__file__).parent.parent /"db" /
+        isolates = {"A":{}}
+        step = "collate"
+
+        assert amr_obj._check_output(isolates=isolates, step = step) == {"A":{'collate':f"{data_folder_single}/tb-profiler_report.json"}}
+
+
+
+def test_fail_isolate_dict():
+
+    with patch.object(AmrSetup, "__init__", lambda x: None):
+        to_input = Input('sample_id', False, 40, 80) 
+        amr_obj = Parse(to_input)
+        amr_obj.logger = logging.getLogger(__name__)
+
+        with pytest.raises(SystemExit):
+            amr_obj._fail_isolate_dict(seq_id='sample_id',step = 'collate')
+
+
+
+
+def test_get_isolate_dict_success():
+
+    with patch.object(Tbtamr, "__init__", lambda x: None):
+        to_input = Input('sample_id', False, 40, 80) 
+        amr_obj = Parse(to_input)
+        amr_obj._cwd = data_folder
+        amr_obj.logger = logging.getLogger(__name__)
+        # amr_obj.db = pathlib.Path(__file__).parent.parent /"db" /
+        isos = ["A"]
+        # step = "collate"
+
+        assert amr_obj._get_isolate_dict(isos=isos) == {"A":{'collate':f"{data_folder_single}/tb-profiler_report.json", 'profile':f"{data_folder_single}/results/A.results.json"}}
+
+
+def test_get_isolate_dict_fail():
+
+    with patch.object(Tbtamr, "__init__", lambda x: None):
+        to_input = Input('sample_id', False, 40, 80) 
+        amr_obj = Parse(to_input)
+        amr_obj._cwd = data_folder
+        amr_obj.logger = logging.getLogger(__name__)
+        # amr_obj.db = pathlib.Path(__file__).parent.parent /"db" /
+        isos = ["Z"]
+        # step = "collate"
+        with pytest.raises(SystemExit):
+            assert amr_obj._get_isolate_dict(isos=isos)
+

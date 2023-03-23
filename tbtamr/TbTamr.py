@@ -52,9 +52,8 @@ class Tbtamr(object):
     def _check_output_file(self, seq_id, step):
 
         wldcrd = f"{seq_id}/results/{seq_id}.results.json" if step == 'profile' else f"{seq_id}/tb-profiler_report.json"
-        # print(wldcrd)
+        
         p = sorted(self._cwd.glob(wldcrd))
-        # print(p)
         if p != []:
             logger.info(f"{p[0]} has been found")
             return f"{p[0]}"
@@ -62,6 +61,7 @@ class Tbtamr(object):
             return False
 
     def _check_output(self, isolates, step = 'profile'):
+        
         for iso in isolates:
             present = self._check_output_file(seq_id= iso, step = step)
             if present:
