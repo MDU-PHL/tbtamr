@@ -120,7 +120,7 @@ class RunProfiler(Tbtamr):
                 self._tidy_tbp()
                 self._remove(keep_bam=self.keep_bam, keep = self.keep)
                 Input = namedtuple('Input', ['isolates',  'exclude_not_reportable','min_depth','min_cov', 'prop_mtb'])
-                to_input = Input(isolates, self.exclude_not_reportable,self.min_cov, self.prop_mtb) 
+                to_input = Input(isolates, self.exclude_not_reportable,self.min_depth, self.min_cov, self.prop_mtb) 
         
                 return to_input
                 
