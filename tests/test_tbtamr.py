@@ -188,52 +188,52 @@ Header_MDU = header =  [
                 "Species",
                 "Phylogenetic lineage",
                 'Predicted drug resistance',
-                "Rifampicin",
+                "Rifampicin - ResMech",
                 "Rifampicin - Interpretation",
                 "Rifampicin - Confidence",
-                "Isoniazid",
+                "Isoniazid - ResMech",
                 "Isoniazid - Interpretation",
                 "Isoniazid - Confidence",
-                "Pyrazinamide",
+                "Pyrazinamide - ResMech",
                 "Pyrazinamide - Interpretation",
                 "Pyrazinamide - Confidence",
-                "Ethambutol",
+                "Ethambutol - ResMech",
                 "Ethambutol - Interpretation",
                 "Ethambutol - Confidence",
-                "Moxifloxacin",
+                "Moxifloxacin - ResMech",
                 "Moxifloxacin - Interpretation",
                 "Moxifloxacin - Confidence",
-                "Amikacin",
+                "Amikacin - ResMech",
                 "Amikacin - Interpretation",
                 "Amikacin - Confidence",
-                "Cycloserine",
+                "Cycloserine - ResMech",
                 "Cycloserine - Interpretation",
                 "Cycloserine - Confidence",
-                "Ethionamide",
+                "Ethionamide - ResMech",
                 "Ethionamide - Interpretation",
                 "Ethionamide - Confidence",
-                "Para-aminosalicylic acid",
+                "Para-aminosalicylic acid - ResMech",
                 "Para-aminosalicylic acid - Interpretation",
                 "Para-aminosalicylic acid - Confidence",
-                "Kanamycin",
+                "Kanamycin - ResMech",
                 "Kanamycin - Interpretation",
                 "Kanamycin - Confidence",
-                "Streptomycin",
+                "Streptomycin - ResMech",
                 "Streptomycin - Interpretation",
                 "Streptomycin - Confidence",
-                "Capreomycin",
+                "Capreomycin - ResMech",
                 "Capreomycin - Interpretation",
                 "Capreomycin - Confidence",
-                "Clofazimine",
+                "Clofazimine - ResMech",
                 "Clofazimine - Interpretation",
                 "Clofazimine - Confidence",
-                "Delamanid",
+                "Delamanid - ResMech",
                 "Delamanid - Interpretation",
                 "Delamanid - Confidence",
-                "Bedaquiline",
+                "Bedaquiline - ResMech",
                 "Bedaquiline - Interpretation",
                 "Bedaquiline - Confidence",
-                "Linezolid",
+                "Linezolid - ResMech",
                 "Linezolid - Interpretation",
                 "Linezolid - Confidence",
                 "Quality",
@@ -391,7 +391,7 @@ def test_get_qual_fail_low_cov():
         amr_obj = Inferrence(to_input)
         amr_obj.logger = logging.getLogger(__name__)
 
-        assert amr_obj._check_quality(cov = 35, perc = 90) == 'Fail QC'
+        assert amr_obj._check_quality(cov = 35, perc = 90) == 'Failed: < 40x aligned coverage to reference genome'
 
 
 def test_get_qual_fail_low_prop_mtb():
@@ -401,7 +401,7 @@ def test_get_qual_fail_low_prop_mtb():
         amr_obj = Inferrence(to_input)
         amr_obj.logger = logging.getLogger(__name__)
 
-        assert amr_obj._check_quality(cov = 50, perc = 79) == 'Fail QC'
+        assert amr_obj._check_quality(cov = 50, perc = 79) == 'Failed: < 80 % _M. tuberculosis_ reads in sample'
 
 def test_get_qual_fail_both():
 
@@ -410,7 +410,7 @@ def test_get_qual_fail_both():
         amr_obj = Inferrence(to_input)
         amr_obj.logger = logging.getLogger(__name__)
 
-        assert amr_obj._check_quality(cov = 35, perc = 79) == 'Fail QC'
+        assert amr_obj._check_quality(cov = 35, perc = 79) == 'Failed: < 80 % _M. tuberculosis_ reads in sample'
 
 def test_check_mutant_success():
 
