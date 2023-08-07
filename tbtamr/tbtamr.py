@@ -3,13 +3,19 @@ from distutils.command.install_egg_info import to_filename
 from tbtamr.AmrSetup import AmrSetup
 from tbtamr.RunProfiler import RunProfiler
 from tbtamr.Collate import Inferrence, Parse, Mdu
-
+from tbtamr.TbTamr_Utils import check,install
 from tbtamr.version import __version__
 
 """
 tbtamr is designed to implement TB-profiler and parse the results compatible for MDU use. It may also be used for other purposes where the format of output is compatible
 
 """
+
+def install_deps(args):
+    install()
+
+def check_deps(args):
+    check()
 
 def collate_results(args):
 
@@ -186,10 +192,14 @@ def set_parsers():
         default= 80
     )
     
+    parser_setup_deps = subparsers.add_parser('setup', help='Install tbtamr dependencies.', formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    parser_check_deps = subparsers.add_parser('check', help='Check tbtamr dependencies.', formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
     parser_sub_run.set_defaults(func=run_pipeline)
     parser_sub_collate.set_defaults(func = collate_results)
     parser_sub_mdu.set_defaults(func = mdu)
+    parser_setup_deps.set_defaults(func = install_deps)
+    parser_check_deps.set_defaults(func = check_deps)
     args = parser.parse_args(args=None if sys.argv[1:]  else ['--help'])
     return args
 

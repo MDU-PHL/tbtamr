@@ -3,7 +3,7 @@ import pathlib, subprocess, subprocess,re
 from collections import namedtuple
 from tbtamr.CustomLog import logger
 from tbtamr.TbTamr import Tbtamr
-
+from tbtamr.TbTamr_Utils import check
 
 class RunProfiler(Tbtamr):
     """
@@ -77,18 +77,9 @@ class RunProfiler(Tbtamr):
         return cmd
 
     def _check_tbprofiler(self):
-        version_pat_3 = re.compile(r'\bv?(?P<major>[0-9]+)\.(?P<minor>[0-9]+)(?:\.(?P<release>[0-9]+)*)?(?:\.(?P<build>[0-9]+)*)?\b')
-        p = subprocess.run(f"tb-profiler version", capture_output=True, encoding = "utf-8", shell = True)
-        p = p.stdout
-        v = version_pat_3.search(p.strip())
-        if v:
-            v = v.group(0)
-            logger.info(f"TB Profiler version {v} detected.")    
-        else:
-            logger.critical(f"It seems something is not quite right with your TB profiler installation. Please check your installation and try again.")
-            raise SystemExit
-        return True
-
+        
+        return check()
+        
         
     def _run(self):
         """
