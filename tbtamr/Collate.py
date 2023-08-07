@@ -277,8 +277,10 @@ class Inferrence(Tbtamr):
         if cov >= self.min_cov and perc >= self.prop_mtb:
 
             return 'Pass QC'
-        else:
-            return 'Fail QC' 
+        elif perc < self.prop_mtb:
+            return 'Failed: < 80 % _M. tuberculosis_ reads in sample'
+        elif  cov < self.min_cov:
+            return 'Failed: < 40x aligned coverage to reference genome'
 
     def _get_interpret(self, drug, mut, qual):
 
@@ -500,8 +502,8 @@ class Inferrence(Tbtamr):
                 # print(_dict)
                 _dict = self._infer_drugs(tbp_result = tbp_result,seq_id=isolate, qual = qual)
                 _dict = self._infer_dr_profile(res = _dict,qual = qual)
-                _dict['Species'] = self._species(res = tbp_result, seq_id=isolate) if qual != 'Fail QC' else qual
-                _dict['Phylogenetic lineage'] = self._lineage(res = tbp_result, seq_id=isolate) if qual != 'Fail QC' else qual
+                _dict['Species'] = self._species(res = tbp_result, seq_id=isolate) if qual == 'Pass QC' else qual
+                _dict['Phylogenetic lineage'] = self._lineage(res = tbp_result, seq_id=isolate) if qual == 'Pass QC' else qual
                 _dict['Database version'] = self._db_version(res = raw_result)
                 _dict['Quality'] = qual
                 _dict['Median genome coverage'] = med_cov
@@ -559,7 +561,7 @@ class Mdu(Inferrence):
     
     def _get_summary_res(self, res):
 
-        if not res['Species'] in ["Mycobacterium tuberculosis", "Fail QC"] :
+        if not res['Species'] in ["Mycobacterium tuberculosis", "Failed: < 40x aligned coverage to reference genome", "Failed: < 80 % _M. tuberculosis_ reads in sample"] :
             return "Not reportable"
         else:
             return res["Predicted drug resistance"]
