@@ -81,8 +81,8 @@ class Inferrence(Tbtamr):
         self.low_level = self._get_low_level()
         self.not_reportable = self._get_not_reportable()
         self.exclude_not_reportable = args.exclude_not_reportable
-        self.prop_mtb = args.prop_mtb
-        self.min_cov = args.min_cov
+        self.prop_mtb = float(args.prop_mtb)
+        self.min_cov = float(args.min_cov)
         
     def _get_db(self,path):
 
@@ -274,7 +274,7 @@ class Inferrence(Tbtamr):
 
     def _check_quality(self, cov, perc):
         
-        if cov >= self.min_cov and perc >= self.prop_mtb:
+        if float(cov) >= self.min_cov and float(perc) >= self.prop_mtb:
 
             return 'Pass QC'
         elif perc < self.prop_mtb:

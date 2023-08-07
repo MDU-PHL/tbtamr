@@ -31,7 +31,7 @@ setup(
     python_requires=">=3.8, <4",
     packages=find_packages(exclude=["contrib", "docs", "tests"]),
     zip_safe=False,
-    install_requires=["pandas","xlsxwriter","psutil","tqdm","requests"],
+    install_requires=["pandas","xlsxwriter","psutil","tqdm","requests","pytest"],
     test_suite="nose.collector",
     tests_require=["nose", "pytest","psutil"],
     entry_points={

@@ -7,34 +7,12 @@ class Tbtamr(object):
     A base class for setting up tbtamr return a valid input object for subsequent steps
     """
     def __init__(self):
-        
-
+    
         
         self.one,self.five,self.fifteen = psutil.getloadavg()
         self.total_cores = os.cpu_count()
         self._cwd = pathlib.Path.cwd()
-        # self.jobs = args.jobs # number of tbprofilers to run at a time
-        # self.read1 = args.read1
-        # self.read2 = args.read2
-        # self.prefix = args.prefix
-        # self.datafile = args.data
-        # self.database = args.database
-
-    # def _get_logger(self):
-    #     logger =logging.getLogger(__name__) 
-    #     logger.setLevel(logging.DEBUG)
-    #     ch = logging.StreamHandler()
-    #     ch.setLevel(logging.DEBUG)
-    #     ch.setFormatter(CustomFormatter())
-    #     fh = logging.FileHandler('tbtamr.log')
-    #     fh.setLevel(logging.DEBUG)
-    #     formatter = logging.Formatter('[%(levelname)s:%(asctime)s] %(message)s', datefmt='%Y%m-%d %I:%M:%S %p') 
-    #     fh.setFormatter(formatter)
-    #     logger.addHandler(ch) 
-    #     logger.addHandler(fh)
-
-    #     return logger
-
+        
     def _run_cmd(self, cmd):
         
         """
