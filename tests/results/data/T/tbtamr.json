@@ -1,0 +1,124 @@
+[
+    {
+        "Seq_ID": "T",
+        "Rifampicin": [
+            {
+                "mutation": "rpoB_p.Leu452Pro",
+                "confidence": "High",
+                "interpretation": "Low-level resistant"
+            }
+        ],
+        "Isoniazid": [
+            {
+                "mutation": "No mechanism identified",
+                "confidence": "",
+                "interpretation": "Susceptible"
+            }
+        ],
+        "Pyrazinamide": [
+            {
+                "mutation": "No mechanism identified",
+                "confidence": "",
+                "interpretation": "Susceptible"
+            }
+        ],
+        "Ethambutol": [
+            {
+                "mutation": "No mechanism identified",
+                "confidence": "",
+                "interpretation": "Susceptible"
+            }
+        ],
+        "Moxifloxacin": [
+            {
+                "mutation": "gyrA_p.Asp94Gly",
+                "confidence": "High",
+                "interpretation": "Resistant"
+            }
+        ],
+        "Amikacin": [
+            {
+                "mutation": "No mechanism identified",
+                "confidence": "",
+                "interpretation": "Susceptible"
+            }
+        ],
+        "Cycloserine": [
+            {
+                "mutation": "No mechanism identified",
+                "confidence": "",
+                "interpretation": "Susceptible"
+            }
+        ],
+        "Ethionamide": [
+            {
+                "mutation": "No mechanism identified",
+                "confidence": "",
+                "interpretation": "Susceptible"
+            }
+        ],
+        "Para-aminosalicylic acid": [
+            {
+                "mutation": "No mechanism identified",
+                "confidence": "",
+                "interpretation": "Susceptible"
+            }
+        ],
+        "Clofazimine": [
+            {
+                "mutation": "No mechanism identified",
+                "confidence": "",
+                "interpretation": "Susceptible"
+            }
+        ],
+        "Delamanid": [
+            {
+                "mutation": "No mechanism identified",
+                "confidence": "",
+                "interpretation": "Susceptible"
+            }
+        ],
+        "Bedaquiline": [
+            {
+                "mutation": "No mechanism identified",
+                "confidence": "",
+                "interpretation": "Susceptible"
+            }
+        ],
+        "Linezolid": [
+            {
+                "mutation": "No mechanism identified",
+                "confidence": "",
+                "interpretation": "Susceptible"
+            }
+        ],
+        "Kanamycin": [
+            {
+                "mutation": "No mechanism identified",
+                "confidence": "",
+                "interpretation": "Susceptible"
+            }
+        ],
+        "Streptomycin": [
+            {
+                "mutation": "No mechanism identified",
+                "confidence": "",
+                "interpretation": "Susceptible"
+            }
+        ],
+        "Capreomycin": [
+            {
+                "mutation": "No mechanism identified",
+                "confidence": "",
+                "interpretation": "Susceptible"
+            }
+        ],
+        "Predicted drug resistance": "Pre-Extensive/Extensive drug-resistance predicted",
+        "Species": "Mycobacterium tuberculosis",
+        "Phylogenetic lineage": "Lineage 2",
+        "Database version": "tbtamr_2022-12-02",
+        "Quality": "Pass QC",
+        "Median genome coverage": 252,
+        "Percentage reads mapped": 99.11
+    }
+]

@@ -1,17 +1,23 @@
 import pytest,pathlib, logging,collections,json
 from unittest import TestCase
 from unittest.mock import patch, PropertyMock
-
+import string
 from tbtamr.AmrSetup import AmrSetup
 from tbtamr.RunProfiler import RunProfiler
 from tbtamr.Collate import Inferrence,Parse
 from tbtamr.TbTamr import Tbtamr
 
 test_folder = pathlib.Path(__file__).parent.parent / 'tests'
-tbp_res = json.load(open(f"{test_folder}/results/tb-profiler_report.json"))
-whoclass = json.load(open(f"{test_folder}/results/classification_truth.json"))
+tbp_res = json.load(open(f"{test_folder}/results/data/A/tb-profiler_report.json"))
 data_folder = test_folder / 'results' /'data'
 data_folder_single  = data_folder / 'A'
+data_folder_batch = data_folder / 'iso.list'
+isos_list = [i for i in string.ascii_uppercase if i not in ['J','Z']]
+# isos_list = ["D"]
+
+with open(f"{test_folder / 'tbtamr_truth.json'}", "r") as j:
+    batch_truth = json.load(j)
+
 
 def test_file_present():
     """
@@ -160,7 +166,6 @@ def test_generate_cmd_batch_success():
     """
     with patch.object(AmrSetup, "__init__", lambda x: None):
         args = DATA(f"{test_folder / 'isolates.tab'}", 3, '--db tbdb',False,False,False,20, 40,80)
-        print(args)
         amr_obj = RunProfiler(args)
         amr_obj.logger = logging.getLogger(__name__)
 
@@ -176,7 +181,6 @@ def test_check_output_file_profile_success():
     """
     with patch.object(AmrSetup, "__init__", lambda x: None):
         to_input = Input(['test'], False, 80, 40) 
-        # print(args)
         amr_obj = Inferrence(to_input)
         amr_obj.logger = logging.getLogger(__name__)
         amr_obj._cwd = pathlib.Path(__file__).parent.parent
@@ -320,30 +324,42 @@ def test_open_json_success():
 
         amr_obj._cwd = pathlib.Path(__file__).parent.parent
 
-        _dict = [{"Seq_ID": "test_1", 
-                  "Rifampicin": "No mechanism identified", 
-                  "Isoniazid": "No mechanism identified", 
-                  "Pyrazinamide": "No mechanism identified", 
-                  "Ethambutol": "No mechanism identified", 
-                  "Moxifloxacin": "No mechanism identified", 
-                  "Amikacin": "No mechanism identified", 
-                  "Cycloserine": "No mechanism identified", 
-                  "Ethionamide": "No mechanism identified", 
-                  "Para-aminosalicylic acid": "No mechanism identified", 
-                  "Clofazimine": "No mechanism identified", 
-                  "Delamanid": "No mechanism identified", 
-                  "Bedaquiline": "No mechanism identified", 
-                  "Linezolid": "No mechanism identified", 
-                  "Kanamycin": "No mechanism identified", 
-                  "Streptomycin": "No mechanism identified", 
-                  "Capreomycin": "No mechanism identified", 
-                  "Predicted drug resistance": "No drug resistance predicted", 
-                  "Species": "Not likely M. tuberculosis", 
-                  "Phylogenetic lineage": "Not typable", 
-                  "Database version": "No database version available", 
-                  "Median genome coverage": 98, "Percentage reads mapped": 98.7}]
-        
-        assert amr_obj._open_json(path=f'{test_folder}/results/data/test_1/tbtamr.json') == _dict
+        _dict = {"A": 
+                 {"rifampicin": "-", 
+                  "isoniazid": "-", 
+                  "pyrazinamide": "-", 
+                  "ethambutol": "-", 
+                  "streptomycin": "-", 
+                  "fluoroquinolones": "-", 
+                  "moxifloxacin": "-", 
+                  "ofloxacin": "-", 
+                  "levofloxacin": "-", 
+                  "ciprofloxacin": "-", 
+                  "aminoglycosides": "-", 
+                  "amikacin": "-", 
+                  "kanamycin": "-", 
+                  "capreomycin": "-", 
+                  "ethionamide": "-", 
+                  "para-aminosalicylic_acid": "-", 
+                  "cycloserine": "-", 
+                  "linezolid": "-", 
+                  "bedaqualine": "-", 
+                  "bedaquiline": "-", 
+                  "clofazamine": "-", 
+                  "clofazimine": "-", 
+                  "delamanid": 
+                  "fbiA_p.Thr302Met", 
+                  "main_lin": 
+                  "lineage4", 
+                  "sublin": "lineage4.1.1.1", 
+                  "drtype": "Other", 
+                  "pct_reads_mapped": 98.21, 
+                  "num_reads_mapped": 4262601, 
+                  "median_coverage": 145, 
+                  "num_dr_variants": 1, 
+                  "num_other_variants": 18}
+                  }
+        assert amr_obj._open_json(path=f'{test_folder}/results/data/A/tb-profiler_report.json') == _dict
 
 def test_get_prop_mtb_success():
 
@@ -352,7 +368,7 @@ def test_get_prop_mtb_success():
         amr_obj = Inferrence(to_input)
         amr_obj.logger = logging.getLogger(__name__)
 
-        assert amr_obj._get_qc_feature(seq_id='sample_id',res = tbp_res,val = 'median_coverage') == 98
+        assert amr_obj._get_qc_feature(seq_id='A',res = tbp_res,val = 'median_coverage') == 145
 
 def test_get_prop_mtb_fail():
 
@@ -361,7 +377,7 @@ def test_get_prop_mtb_fail():
         amr_obj = Inferrence(to_input)
         amr_obj.logger = logging.getLogger(__name__)
 
-        assert amr_obj._get_qc_feature(seq_id='sample_id',res = tbp_res,val = 'median_coverage') != 97
+        assert amr_obj._get_qc_feature(seq_id='A',res = tbp_res,val = 'median_coverage') != 97
 
         
 def test_get_cov_success():
@@ -371,7 +387,7 @@ def test_get_cov_success():
         amr_obj = Inferrence(to_input)
         amr_obj.logger = logging.getLogger(__name__)
 
-        assert amr_obj._get_qc_feature(seq_id='sample_id',res = tbp_res,val = 'pct_reads_mapped') == 98.7
+        assert amr_obj._get_qc_feature(seq_id='A',res = tbp_res,val = 'pct_reads_mapped') == 98.21
 
 def test_get_qual_pass():
 
@@ -633,3 +649,21 @@ def test_get_isolate_dict_fail():
         with pytest.raises(SystemExit):
             assert amr_obj._get_isolate_dict(isos=isos)
 
+def test_interpretations():
+
+    with patch.object(Tbtamr, "__init__", lambda x: None):
+        for i in isos_list:
+            print(i)
+            to_input = Input(i, False, 80, 40) 
+            truth = batch_truth[i]
+            amr_obj = Parse(to_input)
+            amr_obj._cwd = data_folder
+            amr_obj.logger = logging.getLogger(__name__)
+            isos = [i]
+            isolates = amr_obj._get_isolate_dict(isos=isos)
+            to_infer = Input(isolates,False, 80,40)
+            infer_obj = Inferrence(to_infer)
+            infer_obj._cwd = data_folder
+            _dict = infer_obj._infer_single_seq(isolate=i)
+            res = infer_obj._wrangle_json(res = _dict)
+            assert res == truth
