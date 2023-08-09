@@ -664,6 +664,7 @@ def test_interpretations():
             to_infer = Input(isolates,False, 80,40)
             infer_obj = Inferrence(to_infer)
             infer_obj._cwd = data_folder
+            infer_obj.db_path = f"{pathlib.Path(__file__).parent.parent /'db' / 'tbtamr_db_latest.json'}"
             _dict = infer_obj._infer_single_seq(isolate=i)
             res = infer_obj._wrangle_json(res = _dict)
             assert res == truth
