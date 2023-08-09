@@ -519,11 +519,13 @@ class Inferrence(Tbtamr):
                 results.append(res)
             
         return results
-
-    def infer(self,_data,_path,_type):
-        results = self._run_inferrence()
+    def _saving(self,_data,_path,_type ):
         logger.info(f"Saving collated data.")
-        self._save_csv(_data = results, _path = "tbtamr", _type = 'general')
+        self._save_csv(_data = _data, _path = "tbtamr", _type = 'general')
+        
+    def infer(self):
+        results = self._run_inferrence()
+        self._saving(_data = results, _path = "tbtamr", _type = 'general')
 
 class Mdu(Inferrence):
 
