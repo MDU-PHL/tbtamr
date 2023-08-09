@@ -75,7 +75,7 @@ class Inferrence(Tbtamr):
     def __init__(self,args):
         super().__init__()
         self.isolates = args.isolates
-        self.db_path = f"{pathlib.Path(__file__).parent.parent /'db' / 'tbtamr_db_latest.json'}"
+        self.db_path = f"{pathlib.Path(__file__).parent /'db' / 'tbtamr_db_latest.json'}"
         self.db = self._get_db(path = self.db_path)
         self.drugs = self._get_drugs()
         self.low_level = self._get_low_level()
