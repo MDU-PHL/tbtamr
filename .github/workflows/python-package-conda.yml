@@ -39,5 +39,5 @@ jobs:
       run: |
         echo $(pwd) 
         ls
-        ls *
+        ls tbtamr/db
         pytest -vvv -s
