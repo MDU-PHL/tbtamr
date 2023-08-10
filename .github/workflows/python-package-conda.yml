@@ -38,6 +38,4 @@ jobs:
     - name: Test with pytest
       run: |
         echo $(pwd) 
-        ls tbtamr/db
-        head tbtamr/db/tbtamr_db_latest.json
         pytest -vvv -s
