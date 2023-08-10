@@ -4,7 +4,7 @@ from tbtamr.AmrSetup import AmrSetup
 from tbtamr.RunProfiler import RunProfiler
 from tbtamr.Collate import Inferrence, Parse, Mdu
 from tbtamr.TbTamr_Utils import check,install
-from tbtamr.version import __version__
+from tbtamr.version import __version__, db_version
 
 """
 tbtamr is designed to implement TB-profiler and parse the results compatible for MDU use. It may also be used for other purposes where the format of output is compatible

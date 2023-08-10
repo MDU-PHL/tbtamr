@@ -6,6 +6,7 @@ from tbtamr.AmrSetup import AmrSetup
 from tbtamr.RunProfiler import RunProfiler
 from tbtamr.Collate import Inferrence,Parse
 from tbtamr.TbTamr import Tbtamr
+from tbtamr.version import db_version
 
 test_folder = pathlib.Path(__file__).parent.parent / 'tests'
 tbp_res = json.load(open(f"{test_folder}/results/data/A/tb-profiler_report.json"))
@@ -664,7 +665,8 @@ def test_interpretations():
             to_infer = Input(isolates,False, 80,40)
             infer_obj = Inferrence(to_infer)
             infer_obj._cwd = data_folder
-            infer_obj.db_path = f"{pathlib.Path(__file__).parent.parent /'db' / 'tbtamr_db_latest.json'}"
+            db_path = f"{db_version}.json"
+            infer_obj.db_path = f"{pathlib.Path(__file__).parent.parent /'db' / db_path}"
             _dict = infer_obj._infer_single_seq(isolate=i)
             res = infer_obj._wrangle_json(res = _dict)
             assert res == truth

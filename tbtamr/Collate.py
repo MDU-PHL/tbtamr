@@ -4,6 +4,7 @@ import json
 from os import path
 from collections import namedtuple
 import pandas, pathlib
+from tbtamr.version import db_version
 pandas.options.mode.chained_assignment = None
 
 
@@ -75,7 +76,8 @@ class Inferrence(Tbtamr):
     def __init__(self,args):
         super().__init__()
         self.isolates = args.isolates
-        self.db_path = f"{pathlib.Path(__file__).parent /'db' / 'tbtamr_db_latest.json'}"
+        self.db_file = f"{db_version}.json"
+        self.db_path = f"{pathlib.Path(__file__).parent /'db' / self.db_file }"
         self.db = self._get_db(path = self.db_path)
         self.drugs = self._get_drugs()
         self.low_level = self._get_low_level()
@@ -538,8 +540,7 @@ class Mdu(Inferrence):
         self.jsons = args.json
         self.sop = args.output_name
         self.runid = args.runid
-        # self.db_path = f"{pathlib.Path(__file__).parent.parent /'tbtamr' /'db' / 'tbtamr_db_latest.json'}"
-        # self.db = self._get_db(path = self.db_path)
+        
         self.drugs = self._get_drugs()
         # self.low_level = self._get_low_level()
         # self.not_reportable = self._get_not_reportable()
