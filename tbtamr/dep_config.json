@@ -1,0 +1,12 @@
+{
+    "tb-profiler": "tb-profiler version 2>&1",
+    "samtools": "samtools --version 2>&1",
+    "bwa":"bwa 2>&1",
+    "snpEff":"snpEff -version 2>&1",
+    "samclip":"samclip --version 2>&1",
+    "freebayes":"freebayes --version 2>&1",
+    "bcftools":"bcftools --version 2>&1",
+    "bedtools":"bedtools --version 2>&1",
+    "delly":"delly --version 2>&1"
+}
+

@@ -1,0 +1,25 @@
+Seq_ID:,B
+Species:,Mycobacterium tuberculosis
+Phylogenetic lineage:,Lineage 2
+Seq_ID:,B
+Predicted drug resistance:,Multi-drug resistance predicted (MDR-TB)
+
+Drug,Mutation,Interpretation,Confidence
+Rifampicin,rpoB_p.Ser450Leu,Resistant,High
+Isoniazid,katG_p.Ser315Thr,Resistant,High
+Pyrazinamide,pncA_p.Ser59Phe,Resistant,Uncertain
+Ethambutol,embA_c.-11C>A,Resistant,Uncertain
+Moxifloxacin,No mechanism identified,Susceptible,
+Amikacin,No mechanism identified,Susceptible,
+Cycloserine,No mechanism identified,Susceptible,
+Ethionamide,No mechanism identified,Susceptible,
+Para-aminosalicylic_acid,No mechanism identified,Susceptible,
+Clofazimine,No mechanism identified,Susceptible,
+Delamanid,No mechanism identified,Susceptible,
+Bedaquiline,No mechanism identified,Susceptible,
+Linezolid,No mechanism identified,Susceptible,
+Kanamycin,No mechanism identified,Susceptible,
+Streptomycin,rpsL_p.Lys43Arg,Resistant only in combination,High
+Capreomycin,No mechanism identified,Susceptible,
+
+Database version:,tbtamr_2022-12-02

@@ -4,6 +4,7 @@ import json
 from os import path
 from collections import namedtuple
 import pandas, pathlib
+from tbtamr.version import db_version
 pandas.options.mode.chained_assignment = None
 
 
@@ -75,14 +76,15 @@ class Inferrence(Tbtamr):
     def __init__(self,args):
         super().__init__()
         self.isolates = args.isolates
-        self.db_path = f"{pathlib.Path(__file__).parent.parent /'tbtamr' /'db' / 'tbtamr_db_latest.json'}"
+        self.db_file = f"{db_version}.json"
+        self.db_path = f"{pathlib.Path(__file__).parent /'db' / self.db_file }"
         self.db = self._get_db(path = self.db_path)
         self.drugs = self._get_drugs()
         self.low_level = self._get_low_level()
         self.not_reportable = self._get_not_reportable()
         self.exclude_not_reportable = args.exclude_not_reportable
-        self.prop_mtb = args.prop_mtb
-        self.min_cov = args.min_cov
+        self.prop_mtb = float(args.prop_mtb)
+        self.min_cov = float(args.min_cov)
         
     def _get_db(self,path):
 
@@ -274,12 +276,11 @@ class Inferrence(Tbtamr):
 
     def _check_quality(self, cov, perc):
         
-        if cov >= self.min_cov and perc >= self.prop_mtb:
-
+        if float(cov) >= self.min_cov and float(perc) >= self.prop_mtb:
             return 'Pass QC'
-        elif perc < self.prop_mtb:
+        elif float(perc) < self.prop_mtb:
             return 'Failed: < 80 % _M. tuberculosis_ reads in sample'
-        elif  cov < self.min_cov:
+        elif  float(cov) < self.min_cov:
             return 'Failed: < 40x aligned coverage to reference genome'
 
     def _get_interpret(self, drug, mut, qual):
@@ -435,9 +436,8 @@ class Inferrence(Tbtamr):
         return res[seq_id][val]
 
     def _wrangle_json(self,res):
-        # print(res)
+        
         levs = ['Low-level resistant','Resistant'] if self.exclude_not_reportable else ['Low-level resistant','Resistant','Not-reportable','Resistant only in combination']
-        # print(res)
         for drug in self.drugs:
             dr = res[self.drugs[drug]]
             
@@ -451,10 +451,7 @@ class Inferrence(Tbtamr):
                     data.add(mt)
                 else:
                     data.add(f"{mt} ({interp}|{conf})")
-            res[self.drugs[drug]] = ';'.join(list(data))
-        
-        logger.info(f"Saving a wide format csv for {res['Seq_ID']}")
-        self._save_csv(_data = res, _path = f"{res['Seq_ID']}/tbtamr", _type = 'general')
+            res[self.drugs[drug]] = ';'.join(sorted(list(data)))
         
         return res
 
@@ -483,7 +480,26 @@ class Inferrence(Tbtamr):
         logger.info(f"Saving report for {_data['Seq_ID']}")
         pathlib.Path(f"{_data['Seq_ID']}/tbtamr_report.csv").write_text('\n'.join(lines))
 
-    def infer(self):
+    def _infer_single_seq(self, isolate):
+
+        tbp_result = self._open_json(path = self.isolates[isolate]['collate'])
+        raw_result = self._open_json(path = self.isolates[isolate]['profile'])
+        med_cov = self._get_qc_feature(seq_id = isolate, res =tbp_result, val = 'median_coverage')
+        perc_mtb = self._get_qc_feature(seq_id = isolate,res = tbp_result, val = 'pct_reads_mapped')
+        qual = self._check_quality(cov = med_cov,perc = perc_mtb)
+        _dict = self._infer_drugs(tbp_result = tbp_result,seq_id=isolate, qual = qual)
+        _dict = self._infer_dr_profile(res = _dict,qual = qual)
+        _dict['Species'] = self._species(res = tbp_result, seq_id=isolate) if qual == 'Pass QC' else qual
+        _dict['Phylogenetic lineage'] = self._lineage(res = tbp_result, seq_id=isolate) if qual == 'Pass QC' else qual
+        _dict['Database version'] = self._db_version(res = raw_result)
+        _dict['Quality'] = qual
+        _dict['Median genome coverage'] = med_cov
+        _dict['Percentage reads mapped'] = perc_mtb
+    
+        return _dict
+            
+
+    def _run_inferrence(self):
         
         logger.info(f"Now inferring resistance profiles")
         results = []
@@ -492,35 +508,26 @@ class Inferrence(Tbtamr):
             logger.info(f"Working on {isolate}")
             for_collate = self._check_output_file(seq_id=isolate, step = 'collate')
             if for_collate:
-                # _dict = {}
-                tbp_result = self._open_json(path = self.isolates[isolate]['collate'])
-                raw_result = self._open_json(path = self.isolates[isolate]['profile'])
-                med_cov = self._get_qc_feature(seq_id = isolate, res =tbp_result, val = 'median_coverage')
-                perc_mtb = self._get_qc_feature(seq_id = isolate,res = tbp_result, val = 'pct_reads_mapped')
-                qual = self._check_quality(cov = med_cov,perc = perc_mtb)
-                
-                # print(_dict)
-                _dict = self._infer_drugs(tbp_result = tbp_result,seq_id=isolate, qual = qual)
-                _dict = self._infer_dr_profile(res = _dict,qual = qual)
-                _dict['Species'] = self._species(res = tbp_result, seq_id=isolate) if qual == 'Pass QC' else qual
-                _dict['Phylogenetic lineage'] = self._lineage(res = tbp_result, seq_id=isolate) if qual == 'Pass QC' else qual
-                _dict['Database version'] = self._db_version(res = raw_result)
-                _dict['Quality'] = qual
-                _dict['Median genome coverage'] = med_cov
-                _dict['Percentage reads mapped'] = perc_mtb
+                _dict = self._infer_single_seq(isolate=isolate)
                 logger.info(f"Saving results for {isolate}.")
                 # saving 'raw' result as json file
                 self._save_json(_data = [_dict], _path = f"{isolate}/tbtamr")
                 # saving a single sample report - in csv format
                 self._single_report(_data = _dict)
                 # turn results into a format that is for generic use - larger tabular structure.
-                # print(_dict)
-                results.append(self._wrangle_json(res = _dict))
+                res = self._wrangle_json(res = _dict)
+                logger.info(f"Saving a wide format csv for {res['Seq_ID']}")
+                self._save_csv(_data = res, _path = f"{res['Seq_ID']}/tbtamr", _type = 'general')
+                results.append(res)
             
+        return results
+    def _saving(self,_data,_path,_type ):
         logger.info(f"Saving collated data.")
-        self._save_csv(_data = results, _path = "tbtamr", _type = 'general')
-
-
+        self._save_csv(_data = _data, _path = "tbtamr", _type = 'general')
+        
+    def infer(self):
+        results = self._run_inferrence()
+        self._saving(_data = results, _path = "tbtamr", _type = 'general')
 
 class Mdu(Inferrence):
 
@@ -533,8 +540,7 @@ class Mdu(Inferrence):
         self.jsons = args.json
         self.sop = args.output_name
         self.runid = args.runid
-        # self.db_path = f"{pathlib.Path(__file__).parent.parent /'tbtamr' /'db' / 'tbtamr_db_latest.json'}"
-        # self.db = self._get_db(path = self.db_path)
+        
         self.drugs = self._get_drugs()
         # self.low_level = self._get_low_level()
         # self.not_reportable = self._get_not_reportable()
