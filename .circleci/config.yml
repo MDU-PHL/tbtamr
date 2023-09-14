@@ -13,6 +13,7 @@ jobs: # A basic unit of work in a run
       - run: 
           command: |
             python3 setup.py sdist bdist_wheel
+            pip3 install dist/tbtamr-*-py3-none-any.whl 
             
      
       - store_test_results: # Upload test results for display in Test Summary: https://circleci.com/docs/2.0/collect-test-data/
