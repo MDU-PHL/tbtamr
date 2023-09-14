@@ -12,8 +12,14 @@ jobs: # A basic unit of work in a run
       - checkout # check out source code to working directory
       - run: 
           command: |
+            conda create -n tbtamr python=3.9
+            source activate tbtamr
+            python3 setup.py sdist bdist_wheel
+            pip3 install dist/tbtamr-*-py3-none-any.whl 
+            tbtamr --help
             tbtamr setup
             pytest
+      
      
       - store_test_results: # Upload test results for display in Test Summary: https://circleci.com/docs/2.0/collect-test-data/
           path: test-results
