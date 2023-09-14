@@ -12,8 +12,6 @@ jobs: # A basic unit of work in a run
       - checkout # check out source code to working directory
       - run: 
           command: |
-            python3 setup.py sdist bdist_wheel
-            pip3 install dist/tbtamr-*-py3-none-any.whl 
             tbtamr setup
             pytest
      
