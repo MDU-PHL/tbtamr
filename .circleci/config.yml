@@ -13,7 +13,7 @@ jobs: # A basic unit of work in a run
       - run: 
           command: |
             python3 setup.py sdist bdist_wheel
-            pip3 install dist/tbtamr-*-py3-none-any.whl 
+            pip3 install .
             tbtamr setup
             pytest
      
