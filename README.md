@@ -11,10 +11,15 @@
 
 ## tbtAMR installation
 
-In order to install `tbtAMR` conda is strongly recommended - installation instructions can be found [here](https://docs.conda.io/projects/conda/en/latest/user-guide/install/index.html).
+In order to install `tbtAMR` conda is strongly recommended - installation instructions can be found [here](https://docs.conda.io/projects/conda/en/latest/user-guide/install/index.html). 
 
 ```
 conda create -n tbtamr tbtamr
+```
+
+Once you have installed `tbtAMR` you will need to setup the environment. This will install the validated version of `TB-profiler`, if you wish to use another version of `TB-profiler` you may get unexpected behaviour or errors.
+
+```
 conda activate tbtamr
 tbtamr setup
 tbtamr check
@@ -22,43 +27,4 @@ tbtamr check
 
 ## Usage
 
-At the moment `tbtAMR` is specific for illumina paired end reads. If you wish to use ONT data please use [TB-profiler](https://github.com/jodyphelan/TBProfiler). 
-
-`tbtAMR` can be run with a single sample or in a batch approach. 
-
-### Single sample
-
-```
-tbtamr run -r1 /path/to/R1.fq.gz -r2 /path/to/R2.fq.gz -px sample_name
-```
-
-### Batch 
-
-```
-tbtamr run -i /path/to/input.txt
-```
-
-This input file should have NO HEADER
-
-## tbtAMR DB
-
-`tbtAMR` comes with a modified mutational database, defined by validation at MDU for the purposes of reporting mutations in a public health and clinical setting in Victoria.
-
-This database was created using `tb-profiler create_db` (from MDU fork of pathogen-profiler)
-
-The following files are required in order to generate a custom database
-
-* `genome.fasta` the reference for mutations in the database
-* `genome.fasta.fai`
-* `genome.gff`
-* `barcode.bed` 
-* a `csv` file
-    * header ```Gene,Mutation,Drug,Confers,Interaction```
-
-Creation can be done by navigating to a storage directory and running
-
-```
-conda activate tbtamr
-tb-profiler create_db -p <db_prefix> -c <path_to_csv> --custom --db_name <name_of_db> --db_commit <some_unique_string> --db_author <name_of_author> --db_date <date_created>
-```
-
+See our [wiki](https://github.com/MDU-PHL/tbtamr/wiki) page for further information on `tbtamr` usage.
