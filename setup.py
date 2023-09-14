@@ -19,7 +19,7 @@ with open("README.md", "r") as f:
 
 setup(
     name="tbtamr",
-    version="0.0.2",
+    version="0.0.4",
     description="Running TB-Profiler for MDU",
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -50,5 +50,5 @@ setup(
         "Programming Language :: Python :: 3.7",
         "Topic :: Scientific/Engineering :: Bio-Informatics",
     ],
-    package_data={"tbtamr": ["db/*"]}
+    package_data={"tbtamr": ["db/*","dep_config.json"]}
 )

@@ -1,5 +1,5 @@
 include tbtamr/test/*
 include tbtamr/db/*
-include tbtamr/dep_config.json
+include tbtamr/*.json
 
 

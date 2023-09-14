@@ -10,14 +10,31 @@
 In order to install `tbtAMR` conda is strongly recommended - installation instructions can be found [here](https://docs.conda.io/projects/conda/en/latest/user-guide/install/index.html).
 
 ```
-git clone git@github.com:kristyhoran/tbtamr.git
-cd tbtamr
-conda env create -f environment.yml
+conda create -n tbtamr tbtamr
 conda activate tbtamr
-pip3 install .
 tbtamr setup
 tbtamr check
 ```
+
+## Usage
+
+At the moment `tbtAMR` is specific for illumina paired end reads. If you wish to use ONT data please use [TB-profiler](https://github.com/jodyphelan/TBProfiler). 
+
+`tbtAMR` can be run with a single sample or in a batch approach. 
+
+### Single sample
+
+```
+tbtamr run -r1 /path/to/R1.fq.gz -r2 /path/to/R2.fq.gz -px sample_name
+```
+
+### Batch 
+
+```
+tbtamr run -i /path/to/input.txt
+```
+
+This input file should have NO HEADER
 
 ## tbtAMR DB
 
@@ -37,7 +54,7 @@ The following files are required in order to generate a custom database
 Creation can be done by navigating to a storage directory and running
 
 ```
-conda activate tb-profile-env
+conda activate tbtamr
 tb-profiler create_db -p <db_prefix> -c <path_to_csv> --custom --db_name <name_of_db> --db_commit <some_unique_string> --db_author <name_of_author> --db_date <date_created>
 ```
 
