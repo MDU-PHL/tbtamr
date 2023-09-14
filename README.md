@@ -1,29 +1,27 @@
-# tbTAMR
+# tbtAMR
 
-`tbTAMR` implements TB-profiler and custom logic developed at MDU to identify mutations linked to AMR mechanisms in _M. tuberculosis_ and generate reports suitable for public health in Victoria. It may also be suitable for use in research settings.
+`tbtAMR` implements TB-profiler and custom logic developed at MDU to identify mutations linked to AMR mechanisms in _M. tuberculosis_ and generate reports suitable for public health in Victoria. It may also be suitable for use in research settings.
 
-This is an alpha package - and is in the process of being validated for NATA accreditation. Installation instructions below will be updated soon to a single conda package. 
+**`tbtAMR` is now accredited to ISO15189 standard by NATA for use in Victoria Australia.** 
 
 
-**More details to come**
+## tbtAMR installation
 
-## tbTAMR installation
-
-In order to install `tbTAMR` conda is strongly recommended - installation instructions can be found [here](https://docs.conda.io/projects/conda/en/latest/user-guide/install/index.html).
+In order to install `tbtAMR` conda is strongly recommended - installation instructions can be found [here](https://docs.conda.io/projects/conda/en/latest/user-guide/install/index.html).
 
 ```
 git clone git@github.com:kristyhoran/tbtamr.git
 cd tbtamr
 conda env create -f environment.yml
 conda activate tbtamr
-pip3 install git+https://github.com/MDU-PHL/TBProfiler
-pip3 install git+https://github.com/MDU-PHL/pathogen-profiler
 pip3 install .
+tbtamr setup
+tbtamr check
 ```
 
-## tbTAMR DB
+## tbtAMR DB
 
-`tbTAMR` comes with a modified mutational database, defined by validation at MDU for the purposes of reporting mutations in a public health and clinical setting in Victoria.
+`tbtAMR` comes with a modified mutational database, defined by validation at MDU for the purposes of reporting mutations in a public health and clinical setting in Victoria.
 
 This database was created using `tb-profiler create_db` (from MDU fork of pathogen-profiler)
 
