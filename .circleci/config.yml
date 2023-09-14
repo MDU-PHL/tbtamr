@@ -16,8 +16,7 @@ jobs: # A basic unit of work in a run
             source activate tbtamr
             python3 setup.py sdist bdist_wheel
             pip3 install dist/tbtamr-*-py3-none-any.whl 
-            ls
-            # tbtamr --help
+            tbtamr --help
             # tbtamr setup
       
      
