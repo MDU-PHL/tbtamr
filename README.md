@@ -14,7 +14,7 @@
 In order to install `tbtAMR` conda is strongly recommended - installation instructions can be found [here](https://docs.conda.io/projects/conda/en/latest/user-guide/install/index.html). 
 
 ```
-conda create -n tbtamr tbtamr
+conda create -n tbtamr python=3.9
 ```
 
 Once you have installed `tbtAMR` you will need to setup the environment. This will install the validated version of `TB-profiler`, if you wish to use another version of `TB-profiler` you may get unexpected behaviour or errors.
