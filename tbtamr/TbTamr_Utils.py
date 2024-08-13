@@ -54,6 +54,7 @@ def _install_tbprofiler():
         tbp = _run_cmd(cmd = "pip3 install git+https://github.com/MDU-PHL/TBProfiler")
         if tbp.returncode == 0:
             logger.info(f"TB-profiler https://github.com/MDU-PHL/ installed. You should now be good to go.")
+            
 
 def check():
 
