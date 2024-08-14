@@ -40,11 +40,13 @@ def run_predict(args):
     P = PredictAmr(variants = variants,
                  catalog = args.catalog,
                  config = args.catalog_config,
-                 rules = args.rules,
+                 interpretation_rules = args.interpretation_rules,
+                 classification_rules = args.classification_rules,
                  seq_id = args.seq_id,
                  vcf = args.vcf,
                  ref = args.reference_file,
-                 barcode = args.barcode
+                 barcode = args.barcode,
+                 cascade = args.cascade
                 )
     P.run_prediction()
 
@@ -62,7 +64,13 @@ def set_parsers():
     parser_sub_predict = subparsers.add_parser('predict', help='Predict AMR results', formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     
     # parser_sub_predict.add_argument()
-    
+    parser_sub_predict.add_argument(
+        '--seq_id',
+        '-s',
+        # required=True,
+        help= "Sequence name.",
+        default=""
+    )
     parser_sub_predict.add_argument(
         '--vcf',
         help="VCF file generated using the H37rV v3 reference genome",
@@ -95,11 +103,11 @@ def set_parsers():
         default= f"{pathlib.Path(__file__).parent / 'configs'/ 'db_config.json'}"
     )
     parser_sub_predict.add_argument(
-        '--rules',
+        '--interpretation_rules',
         '-r',
         # required = True,
         help= f"csv file with rules for predicting resistance profiles from genomic data.",
-        default= f"{pathlib.Path(__file__).parent / 'configs'/ 'rules.csv'}"
+        default= f"{pathlib.Path(__file__).parent / 'configs'/ 'interpretation_rules.csv'}"
     )
     parser_sub_predict.add_argument(
         '--barcode',
@@ -116,11 +124,11 @@ def set_parsers():
         default= f"{pathlib.Path(__file__).parent / 'db'/ 'tbtamr.fasta'}"
     )
     parser_sub_predict.add_argument(
-        '--seq_id',
-        '-s',
-        # required=True,
-        help= "Sequence name.",
-        default=""
+        '--classification_rules',
+        '-cr',
+        # required = True,
+        help= f"csv file with rules for predicting resistance profiles from genomic data.",
+        default= f"{pathlib.Path(__file__).parent / 'configs'/ 'classification_rules.csv'}"
     )
     parser_sub_predict.add_argument(
         '--min_depth',
