@@ -62,6 +62,7 @@ class Vcf(object):
                 logger.critical(f"Something is wrong with the format of your vcf for {self.seq_id} the following error was encountered: {e} AO = {ao} and DP = {dp}")
                 return 0
         return 0
+
     def check_lof(self,lof,gene,genes,vr, af):
         if not gene in genes:
             return vr,af
@@ -109,10 +110,50 @@ class Vcf(object):
         # print(dt)
         return dt
 
+    def check_data(self, vcf_file, _type = 'gzip') -> bool:
+        
+        if _type == 'gzip':
+            all_lines = (line for line in gzip.open(vcf_file, 'r'))
+            header = (s.decode() for s in all_lines if "##" not in s.decode() )
+        else:
+            all_lines = (line for line in open(vcf_file, 'r'))
+            header = (s for s in all_lines if "##"  in s )
+
+        ao = False
+        dp = False
+        snpeff = False
+        for record in header:
+            if 'INFO=<ID=AO' in record:
+                ao = True
+            elif 'INFO=<ID=DP' in record:
+                dp = True
+            elif 'SnpEffCmd' in record:
+                snpeff = True
+        
+        return ao and dp and snpeff
+        
+
+    def get_data(self, vcf_file):
+
+        try:
+            all_lines = (line for line in gzip.open(vcf_file, 'r'))
+            data = (s.decode().strip().split('\t') for s in all_lines if "##" not in s.decode() )
+            _type = 'gzip'
+        except:
+            all_lines = (line for line in open(vcf_file, 'r'))
+            data = (s.strip().split('\t') for s in all_lines if "##" not in s )
+            _type = 'unzipped'
+        
+        if self.check_data(vcf_file = vcf_file, _type = _type):
+            return data
+        else:
+            logger.critical(f"Something is wrong with your vcf file format. Please read documentation and try again. Exiting..")
+            raise SystemExit
+
     def variant_generator(self,vcf_file, genes) -> list:
 
-        all_lines = (line for line in gzip.open(vcf_file, 'r'))
-        data = (s.decode().strip().split('\t') for s in all_lines if "##" not in s.decode() )
+        
+        data = self.get_data(vcf_file = vcf_file)
         cols = next(data)
         
         parsed_vcf = (dict(zip(cols, val)) for val in data)
@@ -127,11 +168,8 @@ class Vcf(object):
     
     def create_output_dir(self,seq_id, force = False) -> bool:
 
-        # cmd = f"mkdir -p {seq_id}"
         logger.info(f"Will now create directory for {seq_id}")
-        # proc = self.run_cmd(cmd = cmd)
-        # if proc:
-        #     return True
+        
         try:
             pathlib.Path(f"{seq_id}").mkdir(exist_ok=True)
             return True
@@ -145,6 +183,8 @@ class Vcf(object):
         pandas.DataFrame(df).to_csv(f'{self.seq_id}/{self.seq_id}_variants.csv', index = False)
         return True
     
+    
+
     def get_catalog(self, catalog) -> pandas.DataFrame:
     
         return pandas.read_csv(catalog, dtype= str)
@@ -161,7 +201,7 @@ class Vcf(object):
 
                 return variants
             except Exception as e:
-                logger.critical(f"Something is wrong with your vcf format : {e}")
+                logger.critical(f"Something is wrong with your vcf format : {e} If you are unsure you can run try to run tbtamr in annotate mode (providing you have snpEff installed) or fqtovcf mode (providing that mutamr is installed).")
                 raise SystemExit
 
 
