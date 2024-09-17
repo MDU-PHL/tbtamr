@@ -31,6 +31,15 @@ class PredictAmr(object):
         self.classification_rules = classification_rules
         self.cascade = cascade
         self.call_lineage = call_lineage
+        self.cols = [
+            'seq_id',
+            'species',
+            'main_lineage',
+            'predicted drug resistance'
+        ] if self.call_lineage else [
+            'seq_id',
+            'predicted drug resistance'
+        ]
 
     def check_file(self, pth) -> bool:
 
@@ -334,7 +343,7 @@ class PredictAmr(object):
         
         return starter_cols
     
-    def generate_reporting_df(self, result, cols, output) -> pandas.DataFrame:
+    def generate_reporting_df(self, result, output, cols) -> pandas.DataFrame:
 
         df = pandas.DataFrame.from_dict(result, orient= 'index').T
         df = df[cols]
@@ -350,18 +359,12 @@ class PredictAmr(object):
         
     def make_cascade(self, result) -> bool:
 
-        cols = [
-            'seq_id',
-            'species',
-            'main_lineage',
-            'predicted drug resistance'
-        ]
-
-        cols = self.cascade_report(result=result, starter_cols = cols)
+        
+        cols = self.cascade_report(result=result, starter_cols = self.cols)
         self.generate_reporting_df(result=result, cols = cols, output="tbtamr_linelist_cascade_report")
     
     
-    def make_line_list(self, result) -> bool:
+    def make_line_list(self, result, cols) -> bool:
 
         # wrangle reportable/not reportable
         for dr in self.config['drugs_to_infer']:
@@ -390,12 +393,7 @@ class PredictAmr(object):
         # get cols
         dr2report = self.config['drugs_to_report']
         order = sorted([ o for o in dr2report ])
-        cols = [
-            'seq_id',
-            'species',
-            'main_lineage',
-            'predicted drug resistance'
-        ]
+        
         for o in order:
             c = dr2report[o]
             for dr in c:
@@ -489,6 +487,6 @@ class PredictAmr(object):
             interpretation_rules = self.get_rules(rules = self.interpretation_rules)
             classification_rules = self.get_rules(rules = self.classification_rules)
             result = self.compare_mechs_rules(interpretation_rules = interpretation_rules, classification_rules=classification_rules,mechs=mechs, result = result)
-            self.make_line_list(result = result)
+            self.make_line_list(result = result, cols = self.cols)
             if self.cascade:
                 self.make_cascade(result=result)

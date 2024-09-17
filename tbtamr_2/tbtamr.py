@@ -30,7 +30,7 @@ def run_predict(args):
                  interpretation_rules = args.interpretation_rules,
                  classification_rules = args.classification_rules,
                  seq_id = args.seq_id,
-                 vcf = vcf,
+                 vcf = args.vcf,
                  ref = args.reference_file,
                  barcode = args.barcode,
                  cascade = args.cascade,

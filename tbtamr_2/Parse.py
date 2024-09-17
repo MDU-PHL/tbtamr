@@ -114,7 +114,7 @@ class Vcf(object):
         
         if _type == 'gzip':
             all_lines = (line for line in gzip.open(vcf_file, 'r'))
-            header = (s.decode() for s in all_lines if "##" not in s.decode() )
+            header = (s.decode() for s in all_lines if "##" in s.decode() )
         else:
             all_lines = (line for line in open(vcf_file, 'r'))
             header = (s for s in all_lines if "##"  in s )
@@ -122,6 +122,7 @@ class Vcf(object):
         ao = False
         dp = False
         snpeff = False
+
         for record in header:
             if 'INFO=<ID=AO' in record:
                 ao = True
