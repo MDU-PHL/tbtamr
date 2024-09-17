@@ -127,13 +127,18 @@ class Vcf(object):
     
     def create_output_dir(self,seq_id, force = False) -> bool:
 
-        cmd = f"mkdir -p {seq_id}"
+        # cmd = f"mkdir -p {seq_id}"
         logger.info(f"Will now create directory for {seq_id}")
-        proc = self.run_cmd(cmd = cmd)
-        if proc:
+        # proc = self.run_cmd(cmd = cmd)
+        # if proc:
+        #     return True
+        try:
+            pathlib.Path(f"{seq_id}").mkdir(exist_ok=True)
             return True
+        except:
+            logger.critical(f"Something has gone wrong creating the folder for {seq_id}.")
+            raise SystemExit
         
-        return False
     
     def save_variants(self, df) -> bool:
         self.create_output_dir(seq_id=self.seq_id)
@@ -141,6 +146,7 @@ class Vcf(object):
         return True
     
     def get_catalog(self, catalog) -> pandas.DataFrame:
+    
         return pandas.read_csv(catalog, dtype= str)
     
     def get_variant_data(self) -> list:

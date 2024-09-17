@@ -1,6 +1,6 @@
 import sys,gzip,pandas,pathlib,json
 from CustomLog import logger
-from pathogenprofiler import barcode, Vcf
+
 
 import warnings;
 warnings.simplefilter(action='ignore', category=FutureWarning)
@@ -18,7 +18,8 @@ class PredictAmr(object):
                  vcf,
                  ref,
                  barcode,
-                 cascade):
+                 cascade,
+                 call_lineage):
         self.variants = variants
         self.catalog = catalog
         self.config = self.get_config(pth = config)
@@ -29,6 +30,7 @@ class PredictAmr(object):
         self.barcode = barcode
         self.classification_rules = classification_rules
         self.cascade = cascade
+        self.call_lineage = call_lineage
 
     def check_file(self, pth) -> bool:
 
@@ -40,12 +42,12 @@ class PredictAmr(object):
 
         return True
         
-    # def collect_af(self, variants, var):
+    def collect_af(self, variants, var):
 
-    #     for v in variants:
-    #         if v['variant'] == var:
-    #             return v['af']
-    #     return 0
+        for v in variants:
+            if v['variant'] == var:
+                return v['af']
+        return 0
     
     def collect_resistance_mechs(self,catalog,variants) -> pandas.DataFrame:
 
@@ -62,7 +64,6 @@ class PredictAmr(object):
         tp = ""
         if conf != []:
             cfs = sorted([self.config['confidence_levels'][c] for c in conf if c in self.config['confidence_levels']])
-            print(cfs)
             if cfs != []:
                 for c in self.config['confidence_levels']:
                     if self.config['confidence_levels'][c] == cfs[0]:
@@ -71,10 +72,11 @@ class PredictAmr(object):
                 tp = ';'.join(list(set([ self.config['confidence_key'][i] for i in conf])))
         return tp 
 
-    def get_rules_for_dr(self,dr, rules, rule_type) -> pandas.DataFrame:
+    def get_rules_for_dr(self,dr, rules) -> pandas.DataFrame:
+
         rl_tbl = rules[rules['drug']== dr]
-        
         rl_tbl = rl_tbl.fillna('')
+        
         return rl_tbl
 
     def check_shape(self, rule) -> bool:
@@ -84,9 +86,10 @@ class PredictAmr(object):
         return chck
 
     def extract_mutations(self,dr, result) -> list:
+        
         mt = []
         if f"{dr} - mechanisms" in result:
-            mt = [m for m in result[f"{dr} - mechanisms"].split(';') if m != 'No reportable mechanims' ]
+            mt = [m.split()[0] for m in result[f"{dr} - mechanisms"].split(';') if m != 'No reportable mechanims' and self.check_conf_reporting(val = m.split()[-1].strip('()')) ]
             
         return mt
 
@@ -125,20 +128,29 @@ class PredictAmr(object):
 
     def apply_rule_override(self, dr, mechs, rules, result) -> dict:
         # get default rule for the drug       
-        rl_tbl = self.get_rules_for_dr(dr= dr, rules = rules, rule_type= 'overrride')
+        # logger.info(f"Checking for override rules")
+
+        rl_tbl = self.get_rules_for_dr(dr= dr, rules = rules)
+        # print(rl_tbl)
         if not rl_tbl.empty:
             # get all mechs identified in genes associated with dr
             mt = self.extract_mutations(dr = dr, result = result)
             tbl = mechs[mechs[self.config['drug_name_col']].str.lower() == dr]
+            
             # check shape
             for row in rl_tbl.iterrows():
                 # print(row)
+                tbl_to_check = pandas.DataFrame()
                 if row[1]['rule_type'] == 'override_simple':
+                    # print(f'simple override for {dr}')
                     tbl_to_check = tbl[tbl[self.config['variant_col']].isin(mt)]
-                    # print(tbl_to_check)
+                    # if dr == 'rifampicin':
+                        # print(tbl_to_check)
                 else:
                     tbl_to_check = tbl 
-                rle = self.construct_rule(row = row)  
+                # print(tbl_to_check)
+                rle = self.construct_rule(row = row) 
+                # print(rle) 
                 # set up date to False by default - leave existing result
                 update = False
                 # if there is a shape/length criteria to the rule
@@ -146,6 +158,7 @@ class PredictAmr(object):
                     # logger.info(f"Will check shape of df")
                     shape_rule = f"len(mt) {row[1]['shape']}"
                     if eval(shape_rule): # if the shape/size criteria is met then apply the rest of the rule
+                        # print(tbl_to_check)
                         tbl_to_check = tbl_to_check.query(rle) 
                         update = True if not tbl_to_check.empty else False       
                 else: # if no size/shape criteria - just apply the rule
@@ -178,7 +191,7 @@ class PredictAmr(object):
     def apply_rule_default(self,dr, mechs, rules, result) -> dict: 
         
         # get default rule for the drug
-        rl_tbl = self.get_rules_for_dr(dr= dr, rules = rules, rule_type= 'default')
+        rl_tbl = self.get_rules_for_dr(dr= dr, rules = rules)
         # get all mechs identified in genes associated with dr
         tbl = mechs[mechs[self.config['drug_name_col']].str.lower() == dr]
         
@@ -186,7 +199,7 @@ class PredictAmr(object):
         conf = []
         interp = []
         bck = []
-        print(dr)
+        # print(dr)
         for row in rl_tbl.iterrows():
         # use rules to identify the appropriate values.
             rle = self.construct_rule(row = row)
@@ -202,7 +215,7 @@ class PredictAmr(object):
             if not query_result.empty and row[1]['interpretation'] and row[1]['interpretation'] in self.config['resistance_levels']:
                 interp.append(row[1]['interpretation'])
             elif not query_result.empty and row[1]['interpretation'] and not row[1]['interpretation'] in self.config['resistance_levels']:
-                print(row[1]['interpretation'])
+                # print(row[1]['interpretation'])
                 bck.append(row[1]['interpretation'])
         # populate dictionary
         interp = bck if interp == [] else interp # if there are any interpretations that are not in the reported field then they will be sueprseded by the reportable values. If no reportable values are returned then the non reportable may be included - this prevents reporting two or more potentially conflicting results
@@ -410,6 +423,10 @@ class PredictAmr(object):
         rls = rls.fillna('')
         return rls
     
+    def initiate_results(self) -> dict:
+
+        return {"seq_id": self.seq_id}
+
     def species(self,lineage) -> str:
         
         species = "Mycobacterium tuberculosis"
@@ -443,7 +460,6 @@ class PredictAmr(object):
             sl.append(sub)
 
         result =  {
-            'seq_id': self.seq_id,
             'main_lineage':';'.join(main), 
             'sub_lineage':';'.join(sl),
         }
@@ -451,25 +467,28 @@ class PredictAmr(object):
         result['species'] = self.species(lineage=result)
         return result
 
-    def extract_lineage(self,vcf, brcd, ref) -> dict:
+    def extract_lineage(self,vcf, brcd, ref, result) -> dict:
 
-        logger.info("First determining lineage.")
-        v = Vcf(vcf)
-        muts = v.get_bed_gt(brcd,ref)
-        bca = barcode(muts, brcd)
-        lineage = self.wrangle_lineages(bca)
+        if self.call_lineage:
+            from pathogenprofiler import barcode, Vcf
+            logger.info("First determining lineage.")
+            v = Vcf(vcf)
+            muts = v.get_bed_gt(brcd,ref)
+            bca = barcode(muts, brcd)
+            result = self.wrangle_lineages(bca=bca, result = result)
         
-        return lineage
+        return result
 
     def run_prediction(self) -> None:
         
         if self.check_file(pth = self.catalog) and self.check_file(pth= self.classification_rules) and self.check_file(pth= self.interpretation_rules):
-            lineage = self.extract_lineage( vcf = self.vcf, brcd = self.barcode, ref = self.ref )
+            result = self.initiate_results()
+            result = self.extract_lineage( vcf = self.vcf, brcd = self.barcode, ref = self.ref, result = result )
             ctlg = self.get_catalog(catalog= self.catalog)
             mechs = self.collect_resistance_mechs(catalog=ctlg, variants=self.variants)
             interpretation_rules = self.get_rules(rules = self.interpretation_rules)
             classification_rules = self.get_rules(rules = self.classification_rules)
-            result = self.compare_mechs_rules(interpretation_rules = interpretation_rules, classification_rules=classification_rules,mechs=mechs, result = lineage)
+            result = self.compare_mechs_rules(interpretation_rules = interpretation_rules, classification_rules=classification_rules,mechs=mechs, result = result)
             self.make_line_list(result = result)
             if self.cascade:
                 self.make_cascade(result=result)
