@@ -41,7 +41,8 @@ def run_predict(args):
 
 
 def run_fq2vcf(args):
-
+    
+    from Call import generatevcf
     vcf = generatevcf(read1 = args.read1,
                     read2 = args.read2,
                     threads = args.threads,
@@ -57,7 +58,8 @@ def run_fq2vcf(args):
 
 def run_annotate(args):
 
-    vcf_file = self.try_annotate(vcf_file = args.vcf_file)
+    vcf_file = annotate(vcf_file = args.vcf,
+                         seq_id= args.seq_id)
 
 def run_full(args):
 
@@ -220,7 +222,7 @@ def set_parsers():
                 '-s',
                 # required=True,
                 help= "Sequence name.",
-                default=""
+                default="tbtamr"
             )
         parser_sub_annotate.add_argument(
             '--vcf',
@@ -236,7 +238,7 @@ def set_parsers():
                 '-s',
                 # required=True,
                 help= "Sequence name.",
-                default=""
+                default="tbtamr"
             )
             parser_sub_fqtovcf.add_argument(
                 '--read1',
@@ -298,7 +300,7 @@ def set_parsers():
                 '-s',
                 # required=True,
                 help= "Sequence name.",
-                default=""
+                default="tbtamr"
             )
             parser_sub_full.add_argument(
                 '--vcf',
