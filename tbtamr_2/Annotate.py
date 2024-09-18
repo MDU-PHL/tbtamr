@@ -3,6 +3,16 @@ from CustomLog import logger
 from Utils import check_annotate
 
 
+def check_file(pth) -> bool:
+
+    if pth != "" and pathlib.Path(pth).exists():
+        logger.info(f"{pth} exists.")
+    else:
+        logger.critical(f"{pth} does not exists or can't be accessed. Please check your inputs and try again.")
+        raise SystemExit
+
+    return True
+
 def check_canannotate() -> bool:
 
     if check_annotate():
@@ -63,7 +73,7 @@ def create_output_dir(seq_id) -> bool:
 
 def annotate(vcf_file, seq_id):
     
-    if check_canannotate() and create_output_dir(seq_id = seq_id):
+    if check_canannotate() and create_output_dir(seq_id = seq_id) and check_file(pth = vcf_file):
         run_snpeff(vcf_file= vcf_file, seq_id = seq_id)
         
         return f"{seq_id}/{seq_id}.annot.vcf.gz"

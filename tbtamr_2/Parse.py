@@ -28,6 +28,7 @@ class Vcf(object):
         else:
             logger.critical(f"{cmd} failed. The following error was encountered : {proc.stderr}")
             raise SystemExit
+            
     def get_config(self, pth):
 
         if self.check_file(pth= pth):

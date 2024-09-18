@@ -3,6 +3,7 @@ from distutils.command.install_egg_info import to_filename
 from Parse import Vcf
 from Predict import PredictAmr
 from Utils import check_annotate, check_mutamr, check_lineage
+from Annotate import annotate
 
 # from tbtamr.RunProfiler import RunProfiler
 # from tbtamr.Collate import Inferrence, Parse, Mdu
@@ -56,7 +57,7 @@ def run_fq2vcf(args):
 
 def run_annotate(args):
 
-    pass
+    vcf_file = self.try_annotate(vcf_file = args.vcf_file)
 
 def run_full(args):
 
@@ -137,7 +138,7 @@ def set_parsers():
         '-s',
         # required=True,
         help= "Sequence name.",
-        default=""
+        default="tbtamr"
     )
     parser_sub_predict.add_argument(
         '--vcf',
