@@ -1,2 +1,2 @@
-__version__ = '0.0.4'
-db_version = 'tbtamr_db_2022-12-02'
+__version__ = '0.1.0'
+db_version = 'who_2024'

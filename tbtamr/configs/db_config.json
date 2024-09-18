@@ -1,0 +1,97 @@
+{   "_comment_columns": 
+"Please provide the column names in your catalogue that represent the following",
+    "gene_name_col":"gene",
+    "variant_col":"variant",
+    "drug_name_col": "drug",
+    "confidence_column":"FINAL CONFIDENCE GRADING",
+
+    "_comment_confidence_levels":
+    "Confidence levels is required to determine the degree of confidence. The value that indicates the highest confidence should have the lowest number and so on - only include levels which will be reported.",
+    "confidence_levels": {
+        "1) Assoc w R" : 0,
+        "2) Assoc w R - Interim": 1
+    },
+    "_comment_confidence_key":
+    "The confidence key should describe what values you want to appear in the output of abritamr. If you don not want these to change just repeat the value.",
+    "confidence_key":{
+        "1) Assoc w R" : "High",
+        "2) Assoc w R - Interim": "Moderate",
+        "3) Uncertain significance": "Uncertain"
+    },
+
+    "_comment_resistance_levels":
+    "The levels of resistance that should be reported - these should be consistent with values in your rules and classification rules files, values that have the lowest value indicate the higher resistance level where more than one value is supplied.",
+    "resistance_levels":{
+        "Low-level resistant":1,
+        "Resistant":0}
+    ,
+    
+    "_comment_drugs_to_infer":
+    "A list of drugs you wish to infer on - these must be contained in your catalogue",
+    "drugs_to_infer":[
+        "amikacin",
+        "bedaquiline",
+        "capreomycin",
+        "clofazimine",
+        "delamanid",
+        "ethambutol",
+        "ethionamide",
+        "isoniazid",
+        "kanamycin",
+        "levofloxacin",
+        "linezolid",
+        "moxifloxacin",
+        "pyrazinamide",
+        "rifampicin",
+        "streptomycin"
+            ],
+
+    "_comment_drugs_to_report":
+    "A list of drugs you wish to report in the finalised output of tbtamr split into first line and other (please keep keys) - these must be contained in your catalogue",
+    "drugs_to_report":{
+        "first-line":[
+        "rifampicin",
+        "isoniazid",
+        "pyrazinamide",
+        "ethambutol"
+    ],
+        "other":[
+        "moxifloxacin",
+        "ethionamide",
+        "amikacin",
+        "kanamycin",
+        "streptomycin",
+        "capreomycin",
+        "clofazimine",
+        "delamanid",
+        "bedaquiline",
+        "linezolid"
+    ]
+    },
+    
+    "_comment_cascade_reporting":
+    "Group drugs for casecade reporting structure. This should have drugs grouped in order of reporting - this grouping does not need to have any relationship to drug classification or who criteria and is only representative of the order the user wishes to report.",
+    "cascade_reporting":{
+        "default": 
+        [
+            "rifampicin",
+            "isoniazid",
+            "ethambutol",
+            "pyrazinamide",
+            "moxifloxacin"
+        ],
+        "level1":{
+            "resistance_to_any":[
+                "rifampicin",
+                "isoniazid",
+                "ethambutol",
+                "pyrazinamide"
+            ],
+            "report":[
+                "amikacin",
+                "capreomycin",
+                "ethionamide"
+            ]
+        }
+    }
+}

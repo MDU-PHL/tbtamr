@@ -1,0 +1,2 @@
+﻿profile,gene_name,drug_name,mutation,mutation_type,confidence_column,inpterpretation_column,confidence_to_report,mutation_type_to_report,mutation_type_not_to_report
+default,gene,drug,variant,effect,FINAL CONFIDENCE GRADING,,1) Assoc w R;2) Assoc w R - Interim,,synonymous_variant
