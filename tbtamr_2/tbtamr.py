@@ -2,7 +2,7 @@ import argparse, sys, pathlib, tempfile, os
 from distutils.command.install_egg_info import to_filename
 from Parse import Vcf
 from Predict import PredictAmr
-
+from Utils import check_annotate, check_mutamr, check_lineage
 
 # from tbtamr.RunProfiler import RunProfiler
 # from tbtamr.Collate import Inferrence, Parse, Mdu
@@ -99,38 +99,6 @@ def run_full(args):
 def search_catalog(args):
     pass
 
-def check_install(tool) -> bool:
-
-    paths = os.getenv('PATH').split(':')
-    for pth in paths:
-        d = pathlib.Path(pth)
-        tl = d /f"{tool}"
-        if tl.exists():
-            return True
-    return False
-
-def check_annotate():
-
-    if check_install(tool = 'snpEff'):
-        return True
-    else:
-        return False
-
-def check_mutamr():
-
-    if check_install(tool = 'mutamr'):
-        return True
-    else:
-        return False
-
-
-def check_lineage():
-
-    try:
-        from pathogenprofiler import barcode, Vcf
-        return True
-    except:
-        return False
 
 
 def set_parsers():

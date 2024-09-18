@@ -1,5 +1,6 @@
 import sys,gzip,pandas,pathlib,json,warnings,subprocess
 from CustomLog import logger
+from Annotate import annotate
 warnings.simplefilter(action='ignore', category=FutureWarning)
 pandas.set_option("mode.chained_assignment", None)
 
@@ -131,8 +132,12 @@ class Vcf(object):
             elif 'SnpEffCmd' in record:
                 snpeff = True
         
-        return ao and dp and snpeff
+        return ao and dp, snpeff
         
+    def try_annotate(self, vcf_file) -> str:
+
+        vcf_file = annotate(seq_id= self.seq_id, vcf_file = vcf_file)
+        return vcf_file
 
     def get_data(self, vcf_file):
 
@@ -145,8 +150,16 @@ class Vcf(object):
             data = (s.strip().split('\t') for s in all_lines if "##" not in s )
             _type = 'unzipped'
         
-        if self.check_data(vcf_file = vcf_file, _type = _type):
+        dpths,annot = self.check_data(vcf_file = vcf_file, _type = _type)
+        print(dpths)
+        print(annot)
+        if dpths and annot:
             return data
+        elif dpths and not annot:
+            logger.warning(f"It looks like your vcf file is not correctly annotated - please wait while annotation is attempted.")
+            vcf_file = self.try_annotate(vcf_file = vcf_file)
+            all_lines = (line for line in gzip.open(vcf_file, 'r'))
+            return (s.decode().strip().split('\t') for s in all_lines if "##" not in s.decode() )
         else:
             logger.critical(f"Something is wrong with your vcf file format. Please read documentation and try again. Exiting..")
             raise SystemExit
