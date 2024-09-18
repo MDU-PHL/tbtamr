@@ -18,5 +18,5 @@ def generatevcf(read1,read2,threads,ram,seq_id,keep,mindepth,minfrac,force,mtb,t
                 force = force,
                 tmp = tmp)
     vcf = V.run()
-    logger.info(f"Your vcf file has been successfully created! Will now move on the prediction. Thankyou for your patience!")
+    logger.info(f"Your vcf file has been successfully created!")
     return vcf

@@ -4,14 +4,11 @@ from Parse import Vcf
 from Predict import PredictAmr
 from Utils import check_annotate, check_mutamr, check_lineage
 from Annotate import annotate
-
-# from tbtamr.RunProfiler import RunProfiler
-# from tbtamr.Collate import Inferrence, Parse, Mdu
-# from tbtamr.TbTamr_Utils import check,install
+from Search import search
 from version import __version__, db_version
 
 """
-tbtamr is designed to implement TB-profiler and parse the results compatible for MDU use. It may also be used for other purposes where the format of output is compatible
+tbtAMR implements user defined (or default) criteria for the inference of phenotypic AMR in M. tuberculosis.
 
 """
 def run_predict(args):
@@ -43,6 +40,7 @@ def run_predict(args):
 def run_fq2vcf(args):
     
     from Call import generatevcf
+
     vcf = generatevcf(read1 = args.read1,
                     read2 = args.read2,
                     threads = args.threads,
@@ -62,7 +60,7 @@ def run_annotate(args):
                          seq_id= args.seq_id)
 
 def run_full(args):
-
+    from Call import generatevcf
     if args.vcf == '':
         vcf = generatevcf(read1 = args.read1,
                         read2 = args.read2,
@@ -85,7 +83,9 @@ def run_full(args):
               seq_id=args.seq_id,
               )
     variants = Prs.get_variant_data()
-    
+    call_lineage = False
+    if args.call_lineage and check_lineage():
+        call_lineage = True
     P = PredictAmr(variants = variants,
                  catalog = args.catalog,
                  config = args.catalog_config,
@@ -95,12 +95,16 @@ def run_full(args):
                  vcf = vcf,
                  ref = args.reference_file,
                  barcode = args.barcode,
-                 cascade = args.cascade
+                 cascade = args.cascade,
+                 call_lineage = call_lineage
                 )
     P.run_prediction()
 
 def search_catalog(args):
-    pass
+    
+    search(config=args.catalog_config,
+            catalogue=args.catalog,
+            query=args.query)
 
 
 
@@ -362,6 +366,11 @@ def set_parsers():
                 default= f"{pathlib.Path(__file__).parent / 'configs'/ 'classification_rules.csv'}"
             )
             parser_sub_full.add_argument(
+                '--call_lineage',
+                help = "Use pathogen profiler to call lineage",
+                action = "store_true"
+            )
+            parser_sub_full.add_argument(
                 '--min_depth',
                 '-md',
                 help= f"Minimum depth to call a variant - only required if reads supplied as input",
@@ -414,7 +423,7 @@ def set_parsers():
             parser_sub_full.set_defaults(func=run_full)
             parser_sub_fqtovcf.set_defaults(func=run_fq2vcf)
         parser_sub_annotate.set_defaults(func=run_annotate)
-    # parser_sub_search.set_defaults(func = search_catalog)
+    parser_sub_search.set_defaults(func = search_catalog)
     parser_sub_predict.set_defaults(func=run_predict)
     args = parser.parse_args(args=None if sys.argv[1:]  else ['--help'])
     return args
