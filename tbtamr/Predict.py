@@ -1,7 +1,7 @@
 import sys,gzip,pandas,pathlib,json
 from CustomLog import logger
-
-
+from version import db_version
+from datetime import date
 import warnings;
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
@@ -344,7 +344,9 @@ class PredictAmr(object):
         return starter_cols
     
     def generate_reporting_df(self, result, output, cols) -> pandas.DataFrame:
-
+        
+        cols.extend(['db version', 'Date analysed'])
+        
         df = pandas.DataFrame.from_dict(result, orient= 'index').T
         df = df[cols]
         rnm = {}
@@ -423,7 +425,11 @@ class PredictAmr(object):
     
     def initiate_results(self) -> dict:
 
-        return {"seq_id": self.seq_id}
+        return {
+                "seq_id": self.seq_id,
+                "db version": db_version,
+                "Date analysed":date.today().strftime('%Y-%m-%d')
+                }
 
     def species(self,lineage) -> str:
         

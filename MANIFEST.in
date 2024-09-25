@@ -1,5 +1,3 @@
-include tbtamr/test/*
-include tbtamr/db/*
-include tbtamr/*.json
+include mutamr/references/*
 
 
