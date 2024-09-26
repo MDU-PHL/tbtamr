@@ -3,7 +3,7 @@ import pathlib,json
 from tabulate import tabulate
 from unidecode import unidecode
 
-from CustomLog import logger
+from .CustomLog import logger
 
 def check_file(pth) -> bool:
 

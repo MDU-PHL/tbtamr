@@ -93,5 +93,9 @@
                 "ethionamide"
             ]
         }
-    }
+    },
+    "catalogue_variant": [
+        "[A-Za-z0-9]+[_][a-z]+",
+        "[A-Za-z0-9]+[_][a-z][.]\\S+"
+    ]
 }

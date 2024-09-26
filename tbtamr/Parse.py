@@ -1,6 +1,6 @@
-import sys,gzip,pandas,pathlib,json,warnings,subprocess
-from CustomLog import logger
-from Annotate import annotate
+import sys,gzip,pandas,pathlib,json,warnings,subprocess,logging
+from .CustomLog import logger
+from .Annotate import annotate
 warnings.simplefilter(action='ignore', category=FutureWarning)
 pandas.set_option("mode.chained_assignment", None)
 
@@ -10,11 +10,20 @@ class Vcf(object):
                  vcf,
                  catalog,
                  catalog_config,
-                 seq_id):
+                 seq_id,
+                 force):
         self.vcf_file = vcf
         self.catalog = catalog
         self.config = self.get_config(pth = catalog_config)
         self.seq_id = seq_id
+        self.force = force
+
+        self.create_output_dir(seq_id=self.seq_id, force= self.force)
+        fh = logging.FileHandler(f'{seq_id}/tbtamr.log')
+        fh.setLevel(logging.DEBUG)
+        formatter = logging.Formatter('[%(levelname)s:%(asctime)s] %(message)s', datefmt='%Y-%m-%d %I:%M:%S %p') 
+        fh.setFormatter(formatter)
+        logger.addHandler(fh)
 
     def run_cmd(self, cmd) -> bool:
 
@@ -152,8 +161,6 @@ class Vcf(object):
             _type = 'unzipped'
         
         dpths,annot = self.check_data(vcf_file = vcf_file, _type = _type)
-        print(dpths)
-        print(annot)
         if dpths and annot:
             return data
         elif dpths and not annot:
@@ -181,20 +188,22 @@ class Vcf(object):
         
         return results
     
-    def create_output_dir(self,seq_id, force = False) -> bool:
+    def create_output_dir(self,seq_id, force) -> bool:
 
         logger.info(f"Will now create directory for {seq_id}")
-        
+        # ex = not force
+        # pri
+        msg = f"Something has gone wrong creating the folder for {seq_id}." if force else f"Folder for {seq_id} exists. Please use --force if you would like to override any previous results."
         try:
-            pathlib.Path(f"{seq_id}").mkdir(exist_ok=True)
+            pathlib.Path(f"{seq_id}").mkdir(exist_ok=force)
             return True
         except:
-            logger.critical(f"Something has gone wrong creating the folder for {seq_id}.")
+            logger.critical(msg)
             raise SystemExit
         
     
     def save_variants(self, df) -> bool:
-        self.create_output_dir(seq_id=self.seq_id)
+        self.create_output_dir(seq_id=self.seq_id, force = self.force)
         pandas.DataFrame(df).to_csv(f'{self.seq_id}/{self.seq_id}_variants.csv', index = False)
         return True
     
@@ -205,6 +214,7 @@ class Vcf(object):
         return pandas.read_csv(catalog, dtype= str)
     
     def get_variant_data(self) -> list:
+
         if self.check_file(pth = self.vcf_file) and self.check_file(pth = self.catalog):
             try:
                 catalog = self.get_catalog(catalog=self.catalog)

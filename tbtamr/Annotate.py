@@ -1,6 +1,6 @@
 import sys,gzip,pandas,pathlib,json, subprocess, os
-from CustomLog import logger
-from Utils import check_annotate
+from .CustomLog import logger
+from .Utils import check_annotate
 
 
 def check_file(pth) -> bool:
@@ -73,6 +73,13 @@ def create_output_dir(seq_id) -> bool:
 
 def annotate(vcf_file, seq_id):
     
+    create_output_dir(seq_id=seq_id)
+    fh = logging.FileHandler(f'{seq_id}/tbtamr.log')
+    fh.setLevel(logging.DEBUG)
+    formatter = logging.Formatter('[%(levelname)s:%(asctime)s] %(message)s', datefmt='%Y-%m-%d %I:%M:%S %p') 
+    fh.setFormatter(formatter)
+    logger.addHandler(fh)
+
     if check_canannotate() and create_output_dir(seq_id = seq_id) and check_file(pth = vcf_file):
         run_snpeff(vcf_file= vcf_file, seq_id = seq_id)
         

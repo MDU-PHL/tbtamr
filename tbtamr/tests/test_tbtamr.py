@@ -2,13 +2,13 @@ import pytest,pathlib, logging,collections,json,string,pandas
 from unittest import TestCase
 from unittest.mock import patch, PropertyMock
 
-from tbtamr_2.Predict import PredictAmr
+from tbtamr.Predict import PredictAmr
 
 test_folder = pathlib.Path(__file__).parent.parent / 'tests'
 rules_path = pathlib.Path(__file__).parent.parent / 'configs' 
 
-classification_rules = pandas.read_csv(f"{rules_path / 'classification_rules.csv'}")
-interpretation_rules = pandas.read_csv(f"{test_folder / 'interpretation_rules.csv'}")
+classification_rules = pandas.read_csv(f"{rules_path / 'classification_criteria.csv'}")
+interpretation_rules = pandas.read_csv(f"{test_folder / 'interpretation_criteria.csv'}")
 
 def test_check_file():
     """
@@ -160,7 +160,17 @@ def test_extract_mutations_multiple():
     with patch.object(PredictAmr, "__init__", lambda x:None):
         amr_obj = PredictAmr()
         amr_obj.logger = logging.getLogger(__name__)
-        result = {"rifampicin - mechanisms": "var1;var2"}
+        amr_obj.config = {"confidence_levels": {
+                            "1) Assoc w R" : 0,
+                            "2) Assoc w R - Interim": 1
+            },
+            "confidence_key":{
+                    "1) Assoc w R" : "High",
+                    "2) Assoc w R - Interim": "Moderate",
+                    "3) Uncertain significance": "Uncertain"
+                    }
+            }
+        result = {"rifampicin - mechanisms": "var1 (High);var2 (Moderate)"}
 
         assert amr_obj.extract_mutations(result=result, dr = 'rifampicin') == ["var1","var2"]
 
@@ -186,4 +196,9 @@ def test_update_result():
 
 
 def test_construct_rule():
-    pass
+    with patch.object(PredictAmr, "__init__", lambda x:None):
+        amr_obj = PredictAmr()
+        amr_obj.logger = logging.getLogger(__name__)
+        row = 0,interpretation_rules.iloc[6]
+
+        assert amr_obj.construct_rule(row = row) == "`variant` in ['rpoB_p.Asp435Tyr']"

@@ -1,6 +1,6 @@
-import sys,gzip,pandas,pathlib,json
-from CustomLog import logger
-from version import db_version
+import sys,gzip,pandas,pathlib,json,logging, re
+from .CustomLog import logger
+from .version import db_version
 from datetime import date
 import warnings;
 warnings.simplefilter(action='ignore', category=FutureWarning)
@@ -41,6 +41,13 @@ class PredictAmr(object):
             'predicted drug resistance'
         ]
 
+        
+        fh = logging.FileHandler(f'{self.seq_id}/tbtamr.log')
+        fh.setLevel(logging.DEBUG)
+        formatter = logging.Formatter('[%(levelname)s:%(asctime)s] %(message)s', datefmt='%Y-%m-%d %I:%M:%S %p') 
+        fh.setFormatter(formatter)
+        logger.addHandler(fh)
+
     def check_file(self, pth) -> bool:
 
         if pathlib.Path(pth).exists():
@@ -50,7 +57,49 @@ class PredictAmr(object):
             raise SystemExit
 
         return True
+    
+    def check_var(self, catalog) -> bool:
+        logger.info(f"Checking that the variant format is as expected.")
+        vars = list(catalog[self.config['variant_col']])
+        pats = [ re.compile(i) for i in self.config['catalogue_variant'] ]
         
+        not_found = []
+        for v in vars:
+            fls = False
+            # print(pat.match(v))
+            for pat in pats:
+                # print(pat.search(v))
+                if pat.search(v) != None:
+                    fls = True
+            if not fls:
+                not_found.append(v)
+        if not_found == []:
+            logger.info("Variant format is as expected.")
+            return True
+        
+        logger.critical(f"It seems that your {self.config['variant_col']} is not formatted as expected. The following variants: {' '.join(not_found) if len(not_found) <= 10 else 'more than 10 variants' } do not match any of your expected patterns: {' '.join(self.config['catalogue_variant'])}. Please check your inputs and try again.")
+        raise SystemExit
+
+
+    def check_rules_and_cols(self, rules, catalog) -> bool:
+
+        logger.info("Checking that your criteria files are correctly formatted.")
+        cols = [ c for c in rules.columns if 'column' in c ]
+        icols = []
+        for c in cols:
+            icols.extend([ i for i in list(rules[c].unique()) if i != ""])
+        ccols = [ i for i in catalog.columns ]
+
+        for i in icols:
+
+            if i not in ccols:
+                logger.critical(f"There is something wrong with your interpretation criteria and/or your catalogue. Column {i} is in your interpretation criteria but is not present in your catalogue. Please check your inputs and try again.")
+                raise SystemExit
+        logger.info(f"Criteria files appear to be formatted correctly.")
+        return True
+
+        
+
     def collect_af(self, variants, var):
 
         for v in variants:
@@ -61,7 +110,6 @@ class PredictAmr(object):
     def collect_resistance_mechs(self,catalog,variants) -> pandas.DataFrame:
 
         vars = [var['variant'] for var in variants]
-        
         mechs = catalog[catalog[self.config['variant_col']].isin(vars)]
         mechs['af'] = mechs[self.config['variant_col']].apply(lambda x:self.collect_af(variants=variants, var = x))
         
@@ -97,21 +145,21 @@ class PredictAmr(object):
     def extract_mutations(self,dr, result) -> list:
         
         mt = []
-        if f"{dr} - mechanisms" in result:
-            mt = [m.split()[0] for m in result[f"{dr} - mechanisms"].split(';') if m != 'No reportable mechanims' and self.check_conf_reporting(val = m.split()[-1].strip('()')) ]
+        if f"{dr.lower()} - mechanisms" in result:
+            mt = [m.split()[0] for m in result[f"{dr.lower()} - mechanisms"].split(';') if m != 'No reportable mechanims' and self.check_conf_reporting(val = m.split()[-1].strip('()')) ]
             
         return mt
 
     def update_result(self, result, dr, rule)-> dict:
 
-        if f"{dr} - interpretation" in result:
+        if f"{dr.lower()} - interpretation" in result:
             new_interp = rule[1]['interpretation']
-            result[f"{dr} - interpretation"] = new_interp
-            result[f"{dr} - override"] = rule[1]['description'] # add description for tracking purposes.
+            result[f"{dr.lower()} - interpretation"] = new_interp
+            result[f"{dr.lower()} - override"] = rule[1]['description'] # add description for tracking purposes.
 
         return result
 
-    def construct_rule(self, row):
+    def construct_rule(self, row) -> str:
         
         if isinstance(row, tuple):
             d = row[1].to_dict()
@@ -159,7 +207,7 @@ class PredictAmr(object):
                     tbl_to_check = tbl 
                 # print(tbl_to_check)
                 rle = self.construct_rule(row = row) 
-                # print(rle) 
+                
                 # set up date to False by default - leave existing result
                 update = False
                 # if there is a shape/length criteria to the rule
@@ -167,7 +215,7 @@ class PredictAmr(object):
                     # logger.info(f"Will check shape of df")
                     shape_rule = f"len(mt) {row[1]['shape']}"
                     if eval(shape_rule): # if the shape/size criteria is met then apply the rest of the rule
-                        # print(tbl_to_check)
+                        
                         tbl_to_check = tbl_to_check.query(rle) 
                         update = True if not tbl_to_check.empty else False       
                 else: # if no size/shape criteria - just apply the rule
@@ -239,13 +287,15 @@ class PredictAmr(object):
     def get_resistance_profile(self, result) -> dict:
         drs = {"first-line":[],"other":[]}
         alldrs = []
+        
         for dt in drs:
             for dr in self.config["drugs_to_report"][dt]:
-                if result[f"{dr} - interpretation"] in self.config["resistance_levels"]:
+                if result[f"{dr.lower()} - interpretation"] in self.config["resistance_levels"]:
                     drs[dt].append(dr)
                     alldrs.append(dr)
         
         return drs,alldrs
+
     def get_dlm(self, cond) -> str:
         
         dl = ("","")
@@ -297,10 +347,12 @@ class PredictAmr(object):
         
     def compare_mechs_rules(self,interpretation_rules, classification_rules, mechs, result) -> dict:
         
+        logger.info(f"Applying citeria for interpretation.")
         # print(rules[rules['rule_type'] != 'default'])
         for dr in self.config["drugs_to_infer"]:
             result = self.apply_rule_default(dr = dr.lower(), mechs=mechs, rules=interpretation_rules[interpretation_rules['rule_type'] == 'default'], result = result)
             result = self.apply_rule_override(dr= dr.lower(), mechs=mechs,rules=interpretation_rules[interpretation_rules['rule_type'] != 'default'], result=result)
+        logger.info(f"Applying citeria for classification of resistance profile.")
         result = self.classification(rules = classification_rules, result=result)
         result_df = pandas.DataFrame.from_dict(result, orient= 'index').T
         result_df.to_csv(f"{self.seq_id}/tbtamr_results.csv", index = False)
@@ -322,7 +374,7 @@ class PredictAmr(object):
     
     def generate_drug_cols(self, dr) -> list:
 
-        return [f"{dr} - {i}" for i in ['mechanisms','interpretation','confidence']]
+        return [f"{dr.lower()} - {i}" for i in ['mechanisms','interpretation','confidence']]
 
     def cascade_report(self, result, starter_cols):
 
@@ -360,17 +412,18 @@ class PredictAmr(object):
         df.to_csv(f"{self.seq_id}/{output}.csv", index = False)        
         
     def make_cascade(self, result) -> bool:
-
+        
+        logger.info("Generating cascade report.")
         
         cols = self.cascade_report(result=result, starter_cols = self.cols)
         self.generate_reporting_df(result=result, cols = cols, output="tbtamr_linelist_cascade_report")
     
     
     def make_line_list(self, result, cols) -> bool:
-
+        logger.info("Generating linelist for reporting.")
         # wrangle reportable/not reportable
         for dr in self.config['drugs_to_infer']:
-            mch = result[f"{dr} - mechanisms"].split(';')
+            mch = result[f"{dr.lower()} - mechanisms"].split(';')
             mchs = []
             # check if mech should be reported - based on conf in string
             for m in mch:
@@ -380,17 +433,17 @@ class PredictAmr(object):
                         mchs.append(m.split()[0])
                 else:
                     mchs.append(m)
-            result[f"{dr} - mechanisms"] = ';'.join(mchs)
+            result[f"{dr.lower()} - mechanisms"] = ';'.join(mchs)
             # check if conf should be reported
-            cf = result[f"{dr} - confidence"].split(';')
+            cf = result[f"{dr.lower()} - confidence"].split(';')
             conf = ""
             for c in cf:
                 if self.check_conf_reporting(val=c):
                     conf = c
-            result[f"{dr} - confidence"] = conf
+            result[f"{dr.lower()} - confidence"] = conf
             # check interpretation
-            if result[f"{dr} - interpretation"] not in self.config['resistance_levels']:
-                result[f"{dr} - interpretation"] = "Susceptible"
+            if result[f"{dr.lower()} - interpretation"] not in self.config['resistance_levels']:
+                result[f"{dr.lower()} - interpretation"] = "Susceptible"
         
         # get cols
         dr2report = self.config['drugs_to_report']
@@ -492,7 +545,9 @@ class PredictAmr(object):
             mechs = self.collect_resistance_mechs(catalog=ctlg, variants=self.variants)
             interpretation_rules = self.get_rules(rules = self.interpretation_rules)
             classification_rules = self.get_rules(rules = self.classification_rules)
-            result = self.compare_mechs_rules(interpretation_rules = interpretation_rules, classification_rules=classification_rules,mechs=mechs, result = result)
-            self.make_line_list(result = result, cols = self.cols)
-            if self.cascade:
-                self.make_cascade(result=result)
+            if self.check_var(catalog = ctlg) and self.check_rules_and_cols(rules = interpretation_rule, catalog = ctlg):
+                result = self.compare_mechs_rules(interpretation_rules = interpretation_rules, classification_rules=classification_rules,mechs=mechs, result = result)
+                self.make_line_list(result = result, cols = self.cols)
+                if self.cascade:
+                    self.make_cascade(result=result)
+        

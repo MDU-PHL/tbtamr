@@ -1,11 +1,11 @@
 import argparse, sys, pathlib, tempfile, os
 from distutils.command.install_egg_info import to_filename
-from Parse import Vcf
-from Predict import PredictAmr
-from Utils import check_annotate, check_mutamr, check_lineage
-from Annotate import annotate
-from Search import search
-from version import __version__, db_version
+from .Parse import Vcf
+from .Predict import PredictAmr
+from .Utils import check_annotate, check_mutamr, check_lineage
+from .Annotate import annotate
+from .Search import search
+from .version import __version__, db_version
 
 """
 tbtAMR implements user defined (or default) criteria for the inference of phenotypic AMR in M. tuberculosis.
@@ -17,6 +17,7 @@ def run_predict(args):
               catalog= args.catalog,
               catalog_config = args.catalog_config,
               seq_id=args.seq_id,
+              force = args.force
               )
     variants = Prs.get_variant_data()
     call_lineage = False
@@ -25,8 +26,8 @@ def run_predict(args):
     P = PredictAmr(variants = variants,
                  catalog = args.catalog,
                  config = args.catalog_config,
-                 interpretation_rules = args.interpretation_rules,
-                 classification_rules = args.classification_rules,
+                 interpretation_rules = args.interpretation_criteria,
+                 classification_rules = args.classification_criteria,
                  seq_id = args.seq_id,
                  vcf = args.vcf,
                  ref = args.reference_file,
@@ -39,7 +40,7 @@ def run_predict(args):
 
 def run_fq2vcf(args):
     
-    from Call import generatevcf
+    from .Call import generatevcf
 
     vcf = generatevcf(read1 = args.read1,
                     read2 = args.read2,
@@ -60,7 +61,7 @@ def run_annotate(args):
                          seq_id= args.seq_id)
 
 def run_full(args):
-    from Call import generatevcf
+    from .Call import generatevcf
     if args.vcf == '':
         vcf = generatevcf(read1 = args.read1,
                         read2 = args.read2,
@@ -89,14 +90,16 @@ def run_full(args):
     P = PredictAmr(variants = variants,
                  catalog = args.catalog,
                  config = args.catalog_config,
-                 interpretation_rules = args.interpretation_rules,
-                 classification_rules = args.classification_rules,
+                 interpretation_rules = args.interpretation_criteria,
+                 classification_rules = args.classification_criteria,
                  seq_id = args.seq_id,
                  vcf = vcf,
                  ref = args.reference_file,
                  barcode = args.barcode,
                  cascade = args.cascade,
-                 call_lineage = call_lineage
+                 call_lineage = call_lineage,
+                 force = args.force
+                
                 )
     P.run_prediction()
 
@@ -166,11 +169,11 @@ def set_parsers():
         default= f"{pathlib.Path(__file__).parent / 'configs'/ 'db_config.json'}"
     )
     parser_sub_predict.add_argument(
-        '--interpretation_rules',
+        '--interpretation_criteria',
         '-r',
         # required = True,
         help= f"csv file with rules for predicting resistance profiles from genomic data.",
-        default= f"{pathlib.Path(__file__).parent / 'configs'/ 'interpretation_rules.csv'}"
+        default= f"{pathlib.Path(__file__).parent / 'configs'/ 'interpretation_criteria.csv'}"
     )
     parser_sub_predict.add_argument(
         '--barcode',
@@ -187,11 +190,11 @@ def set_parsers():
         default= f"{pathlib.Path(__file__).parent / 'db'/ 'tbtamr.fasta'}"
     )
     parser_sub_predict.add_argument(
-        '--classification_rules',
+        '--classification_criteria',
         '-cr',
         # required = True,
         help= f"csv file with rules for predicting resistance profiles from genomic data.",
-        default= f"{pathlib.Path(__file__).parent / 'configs'/ 'classification_rules.csv'}"
+        default= f"{pathlib.Path(__file__).parent / 'configs'/ 'classification_criteria.csv'}"
     )
     parser_sub_predict.add_argument(
         '--force',
@@ -235,7 +238,7 @@ def set_parsers():
         )
 
         if check_mutamr():
-            from Call import generatevcf
+            from .Call import generatevcf
             parser_sub_fqtovcf = subparsers.add_parser('fq2vcf', help='Generate an annotated vcf file from paired-end fastq files - NO report generated.', formatter_class=argparse.ArgumentDefaultsHelpFormatter)
             parser_sub_fqtovcf.add_argument(
                 '--seq_id',
@@ -338,11 +341,11 @@ def set_parsers():
                 default= f"{pathlib.Path(__file__).parent / 'configs'/ 'db_config.json'}"
             )
             parser_sub_full.add_argument(
-                '--interpretation_rules',
+                '--interpretation_criteria',
                 '-r',
                 # required = True,
                 help= f"csv file with rules for predicting resistance profiles from genomic data.",
-                default= f"{pathlib.Path(__file__).parent / 'configs'/ 'interpretation_rules.csv'}"
+                default= f"{pathlib.Path(__file__).parent / 'configs'/ 'interpretation_criteria.csv'}"
             )
             parser_sub_full.add_argument(
                 '--barcode',
@@ -359,11 +362,11 @@ def set_parsers():
                 default= f"{pathlib.Path(__file__).parent / 'db'/ 'tbtamr.fasta'}"
             )
             parser_sub_full.add_argument(
-                '--classification_rules',
+                '--classification_criteria',
                 '-cr',
                 # required = True,
                 help= f"csv file with rules for predicting resistance profiles from genomic data.",
-                default= f"{pathlib.Path(__file__).parent / 'configs'/ 'classification_rules.csv'}"
+                default= f"{pathlib.Path(__file__).parent / 'configs'/ 'classification_criteria.csv'}"
             )
             parser_sub_full.add_argument(
                 '--call_lineage',
