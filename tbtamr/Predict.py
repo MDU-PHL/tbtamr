@@ -59,6 +59,7 @@ class PredictAmr(object):
         return True
     
     def check_var(self, catalog) -> bool:
+
         logger.info(f"Checking that the variant format is as expected.")
         vars = list(catalog[self.config['variant_col']])
         pats = [ re.compile(i) for i in self.config['catalogue_variant'] ]
@@ -66,9 +67,7 @@ class PredictAmr(object):
         not_found = []
         for v in vars:
             fls = False
-            # print(pat.match(v))
             for pat in pats:
-                # print(pat.search(v))
                 if pat.search(v) != None:
                     fls = True
             if not fls:
