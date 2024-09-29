@@ -1,6 +1,6 @@
 
 from .CustomLog import logger
-
+import logging
 from mutamr import Fastq2vcf
 
 

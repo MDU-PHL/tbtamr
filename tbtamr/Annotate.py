@@ -1,4 +1,4 @@
-import sys,gzip,pandas,pathlib,json, subprocess, os
+import sys,gzip,pandas,pathlib,json, subprocess, os,logging
 from .CustomLog import logger
 from .Utils import check_annotate
 
