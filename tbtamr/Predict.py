@@ -544,7 +544,7 @@ class PredictAmr(object):
             mechs = self.collect_resistance_mechs(catalog=ctlg, variants=self.variants)
             interpretation_rules = self.get_rules(rules = self.interpretation_rules)
             classification_rules = self.get_rules(rules = self.classification_rules)
-            if self.check_var(catalog = ctlg) and self.check_rules_and_cols(rules = interpretation_rule, catalog = ctlg):
+            if self.check_var(catalog = ctlg) and self.check_rules_and_cols(rules = interpretation_rules, catalog = ctlg):
                 result = self.compare_mechs_rules(interpretation_rules = interpretation_rules, classification_rules=classification_rules,mechs=mechs, result = result)
                 self.make_line_list(result = result, cols = self.cols)
                 if self.cascade:
