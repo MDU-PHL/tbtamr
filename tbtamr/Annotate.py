@@ -74,7 +74,7 @@ def create_output_dir(seq_id) -> bool:
 def annotate(vcf_file, seq_id):
     
     create_output_dir(seq_id=seq_id)
-    fh = logging.FileHandler(f'{seq_id}/tbtamr.log')
+    fh = logging.FileHandler(f'{seq_id}/snpeff.log')
     fh.setLevel(logging.DEBUG)
     formatter = logging.Formatter('[%(levelname)s:%(asctime)s] %(message)s', datefmt='%Y-%m-%d %I:%M:%S %p') 
     fh.setFormatter(formatter)

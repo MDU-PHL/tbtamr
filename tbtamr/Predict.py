@@ -41,13 +41,6 @@ class PredictAmr(object):
             'predicted drug resistance'
         ]
 
-        
-        fh = logging.FileHandler(f'{self.seq_id}/tbtamr.log')
-        fh.setLevel(logging.DEBUG)
-        formatter = logging.Formatter('[%(levelname)s:%(asctime)s] %(message)s', datefmt='%Y-%m-%d %I:%M:%S %p') 
-        fh.setFormatter(formatter)
-        logger.addHandler(fh)
-
     def check_file(self, pth) -> bool:
 
         if pathlib.Path(pth).exists():

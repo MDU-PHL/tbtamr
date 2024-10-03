@@ -82,7 +82,7 @@ def run_full(args):
               catalog= args.catalog,
               catalog_config = args.catalog_config,
               seq_id=args.seq_id,
-              force = args.force
+              force = True
               )
     variants = Prs.get_variant_data()
     call_lineage = False
