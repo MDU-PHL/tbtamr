@@ -399,7 +399,7 @@ class PredictAmr(object):
         cols.extend(['db version', 'Date analysed'])
         
         df = pandas.DataFrame.from_dict(result, orient= 'index').T
-        df = df[cols]
+        df = df[[c for c in cols if c in df.columns]]
         rnm = {}
         for c in cols:
             if c == "main_lineage":
@@ -503,7 +503,7 @@ class PredictAmr(object):
 
         return list(set([i.split('.')[0] for i in lins]) )
 
-    def wrangle_lineages(self,bca) -> dict:
+    def wrangle_lineages(self,bca, result) -> dict:
 
         lins = sorted([i.id for i in bca])
         main = self.get_main_lineage(lins = lins)
@@ -515,10 +515,8 @@ class PredictAmr(object):
                     sub = lins[i]
             sl.append(sub)
 
-        result =  {
-            'main_lineage':';'.join(main), 
-            'sub_lineage':';'.join(sl),
-        }
+        result['main_lineage'] = ';'.join(main)
+        result['sub_lineage']=';'.join(sl)
         
         result['species'] = self.species(lineage=result)
         return result
@@ -526,12 +524,16 @@ class PredictAmr(object):
     def extract_lineage(self,vcf, brcd, ref, result) -> dict:
 
         if self.call_lineage:
+            logger.info(f"Will try to determine lineage.")
             from pathogenprofiler import barcode, Vcf
-            logger.info("First determining lineage.")
-            v = Vcf(vcf)
-            muts = v.get_bed_gt(brcd,ref)
-            bca = barcode(muts, brcd)
-            result = self.wrangle_lineages(bca=bca, result = result)
+            try:
+                logger.info("Determining lineage.")
+                v = Vcf(vcf)
+                muts = v.get_bed_gt(brcd,ref)
+                bca = barcode(muts, brcd)
+                result = self.wrangle_lineages(bca=bca, result = result)
+            except ValueError as e:
+                logger.warning(f"pathogen-profiler error: {e}. Lineage will not be run")
         
         return result
 

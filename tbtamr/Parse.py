@@ -38,7 +38,7 @@ class Vcf(object):
             logger.critical(f"{cmd} failed. The following error was encountered : {proc.stderr}")
             raise SystemExit
             
-    def get_config(self, pth):
+    def get_config(self, pth) -> dict:
 
         if self.check_file(pth= pth):
             with open(pth, 'r') as j:
@@ -61,9 +61,9 @@ class Vcf(object):
                 return True        
         return False
     
-    def calc_af(self, ao, dp):
+    def calc_af(self, ao, dp) -> float:
+        
         if ao != [] and dp != []:
-            
             try:
                 a = int(ao[0].split('=')[-1])
                 d = int(dp[0].split('=')[-1])
@@ -74,7 +74,7 @@ class Vcf(object):
                 return 0
         return 0
 
-    def check_lof(self,lof,gene,genes,vr, af):
+    def check_lof(self,lof,gene,genes,vr, af) -> tuple:
         if not gene in genes:
             return vr,af
         else:
@@ -85,9 +85,6 @@ class Vcf(object):
                 return f"{gene}_LoF",float(a)
             else:
                 return vr,af
-        
-
-        
         
 
     def top_ann(self,nfo, genes ) -> dict:
@@ -203,7 +200,7 @@ class Vcf(object):
         
     
     def save_variants(self, df) -> bool:
-        self.create_output_dir(seq_id=self.seq_id, force = self.force)
+        # self.create_output_dir(seq_id=self.seq_id, force = self.force)
         pandas.DataFrame(df).to_csv(f'{self.seq_id}/{self.seq_id}_variants.csv', index = False)
         return True
     

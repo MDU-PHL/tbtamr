@@ -31,7 +31,18 @@ setup(
     python_requires=">=3.10, <4",
     packages=find_packages(exclude=["contrib", "docs", "tests"]),
     zip_safe=False,
-    install_requires=["pandas","pytest","tabulate","unidecode"],
+    install_requires=[
+                        "pandas",
+                        "pytest",
+                        "tabulate",
+                        "unidecode",
+                        "pysam",
+                        'requests',
+                        "joblib",
+                        "pydantic",
+                        "tqdm",
+                        "pathogen-profiler @ git+https://github.com/jodyphelan/pathogen-profiler.git#egg=pathogen-profiler-4.3.0"
+                        ],
     test_suite="nose.collector",
     tests_require=["nose", "pytest","psutil"],
     entry_points={

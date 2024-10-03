@@ -82,6 +82,7 @@ def run_full(args):
               catalog= args.catalog,
               catalog_config = args.catalog_config,
               seq_id=args.seq_id,
+              force = args.force
               )
     variants = Prs.get_variant_data()
     call_lineage = False
@@ -97,9 +98,7 @@ def run_full(args):
                  ref = args.reference_file,
                  barcode = args.barcode,
                  cascade = args.cascade,
-                 call_lineage = call_lineage,
-                 force = args.force
-                
+                 call_lineage = call_lineage                
                 )
     P.run_prediction()
 

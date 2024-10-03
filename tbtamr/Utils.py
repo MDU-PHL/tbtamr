@@ -1,5 +1,5 @@
 import os,pathlib
-
+from .CustomLog import logger
 
 
 def check_install(tool) -> bool:
@@ -28,9 +28,11 @@ def check_mutamr():
 
 
 def check_lineage():
-
+    logger.info(f"Will check if lineage can be run.")
     try:
         from pathogenprofiler import barcode, Vcf
+        logger.info(f"Lineage calling can be undertaken.")
         return True
     except:
+        logger.warning(f"Lineage calling cannot be undertaken - pathogenprofiler needs to be installed.")
         return False
