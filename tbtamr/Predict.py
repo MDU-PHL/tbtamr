@@ -525,15 +525,19 @@ class PredictAmr(object):
 
         if self.call_lineage:
             logger.info(f"Will try to determine lineage.")
-            from pathogenprofiler import barcode, Vcf
+            
             try:
+                from pathogenprofiler import barcode, Vcf
                 logger.info("Determining lineage.")
                 v = Vcf(vcf)
                 muts = v.get_bed_gt(brcd,ref)
                 bca = barcode(muts, brcd)
                 result = self.wrangle_lineages(bca=bca, result = result)
             except ValueError as e:
-                logger.warning(f"pathogen-profiler error: {e}. Lineage will not be run")
+                logger.warning(f"pathogen-profiler error: {e}.")
+                logger.warning(f"If you would like to use tbtAMR to detect lineage please install pathogen-profiler and ,ake sure your environment also has bcftools installed")
+                logger.warning(f"pip3 install git+https://github.com/MDU-PHL/pathogen-profiler@4.3.0")
+                logger.warning(f"Lineage calling cannot be performed.")
         
         return result
 

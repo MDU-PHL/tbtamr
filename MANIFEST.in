@@ -1,5 +1,4 @@
-include tbtamr/test/*
+include tbtamr/tests/*
 include tbtamr/db/*
-include tbtamr/*.json
-
+include tbtamr/configs/*
 
