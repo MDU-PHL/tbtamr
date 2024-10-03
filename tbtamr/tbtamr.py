@@ -212,11 +212,6 @@ def set_parsers():
         help = 'If you would like to apply cascade reporting structure.'
     )
     parser_sub_predict.add_argument(
-        '--report_rules',
-        help = 'Path to file describing reporting rules.',
-        default= f"{pathlib.Path(__file__).parent / 'configs'/ 'report_rules.csv'}"
-    )
-    parser_sub_predict.add_argument(
         '--tmp',
         help = "temp directory to use",
         default = f"{pathlib.Path(tempfile.gettempdir())}"
@@ -411,11 +406,6 @@ def set_parsers():
                 '--cascade',
                 action='store_true',
                 help = 'If you would like to apply cascade reporting structure.'
-            )
-            parser_sub_full.add_argument(
-                '--report_rules',
-                help = 'Path to file describing reporting rules.',
-                default= f"{pathlib.Path(__file__).parent / 'configs'/ 'report_rules.csv'}"
             )
             parser_sub_full.add_argument(
                 '--tmp',
