@@ -485,13 +485,13 @@ class PredictAmr(object):
         
         species = "Mycobacterium tuberculosis"
         if 'La1' in lineage['main_lineage'] and 'BCG' not in lineage['sub_lineage']:
-            species = f"{species} var bovis"
+            species = f"Mycobacterium bovis"
         elif 'La1' in lineage['main_lineage'] and 'BCG' in lineage['sub_lineage']:
-            species = f"{species} var bovis BCG"
+            species = f"Mycobacterium bovis BCG"
         elif 'La3' in lineage['main_lineage']:
-            species = f"{species} var orygis"
+            species = f"Mycobacterium orygis"
         elif 'La2' in lineage['main_lineage']:
-            species = f"{species} var caprae"
+            species = f"Mycobacterium caprae"
         elif lineage['main_lineage'] == '':
             species = "Unable to confirm species"
         
