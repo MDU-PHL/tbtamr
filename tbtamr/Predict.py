@@ -285,7 +285,7 @@ class PredictAmr(object):
                 if result[f"{dr.lower()} - interpretation"] in self.config["resistance_levels"]:
                     drs[dt].append(dr)
                     alldrs.append(dr)
-        
+        # print(drs)
         return drs,alldrs
 
     def get_dlm(self, cond) -> str:
@@ -298,12 +298,16 @@ class PredictAmr(object):
         return dl
     
     def construct_classification(self, drs, cmprtr, alldrs, dl) -> str:
-
+        # print(drs)
+        # print(dl)
         drs = drs.split(dl[0]) if dl[0] != "" else [drs]
+
         req_cond = []
+        # print(alldrs)
         for rq in drs:
             if rq != "":
                 c = f"'{rq}' {cmprtr} {alldrs}"
+                # print(c)
                 req_cond.append(c)
         jn = dl[1]
 
@@ -314,6 +318,7 @@ class PredictAmr(object):
         lngth = row[1]['shape']
         drg_cls = row[1]['drug_class_condition']
         rq_dl = self.get_dlm(cond = row[1]['required_condition'])
+        
         x_dl = self.get_dlm(cond = row[1]['exlusionary_condition'])
         frst_cond = ""
         if drg_cls != "":
@@ -326,11 +331,12 @@ class PredictAmr(object):
         
 
     def classification(self, rules, result) -> dict:
-
         drs,alldrs = self.get_resistance_profile(result = result)
         result['predicted drug resistance'] ="No first-line drug resistance"
         for row in rules.iterrows():
+            
             rle = self.get_classification_rule(row = row)
+            
             if eval(rle):
                 result['predicted drug resistance'] = row[1]["classification"]
                 break
@@ -340,7 +346,6 @@ class PredictAmr(object):
     def compare_mechs_rules(self,interpretation_rules, classification_rules, mechs, result) -> dict:
         
         logger.info(f"Applying citeria for interpretation.")
-        # print(rules[rules['rule_type'] != 'default'])
         for dr in self.config["drugs_to_infer"]:
             result = self.apply_rule_default(dr = dr.lower(), mechs=mechs, rules=interpretation_rules[interpretation_rules['rule_type'] == 'default'], result = result)
             result = self.apply_rule_override(dr= dr.lower(), mechs=mechs,rules=interpretation_rules[interpretation_rules['rule_type'] != 'default'], result=result)

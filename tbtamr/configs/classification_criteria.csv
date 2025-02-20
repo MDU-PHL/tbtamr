@@ -1,4 +1,6 @@
 ﻿classification,shape,drug_class_condition,required_condition,comparator,exclusion_comparator,exlusionary_condition,optional_condition
+Pre-Extensive/Extensive drug-resistance predicted,>1,,rifampicin&moxifloxacin,in,,,isoniazid
+Pre-Extensive/Extensive drug-resistance predicted,>1,,rifampicin&levofloxacin,in,,,isoniazid
 Mono-resistance predicted (Hr-TB),==1,first-line,isoniazid,in,,,
 Mono-resistance predicted (RR-TB),==1,first-line,rifampicin,in,,,
 Mono-resistance predicted ,==1,first-line,ethambutol,in,,,
@@ -9,5 +11,3 @@ Poly-resistance predicted (Hr-TB),>1,first-line,isoniazid&pyrazinamide,in,not in
 Poly-resistance predicted (Hr-TB),>1,first-line,isoniazid&ethambutol,in,not in,rifampicin,
 Poly-resistance predicted,>1,first-line,ethambutol&pyrazinamide,in,not in,rifampicin|isoniazid,
 Multi-drug resistance predicted (MDR-TB),>1,first-line,isoniazid&rifampicin,in,,,
-Pre-Extensive/Extensive drug-resistance predicted,>1,,rifampicin&moxifloxacin,in,,,isoniazid
-Pre-Extensive/Extensive drug-resistance predicted,>1,,rifampicin&levofloxacin,in,,,isoniazid
