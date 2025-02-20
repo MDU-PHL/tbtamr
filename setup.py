@@ -12,7 +12,7 @@ with open("README.md", "r") as f:
 
 setup(
     name="tbtamr",
-    version="1.0.2",
+    version="1.0.3",
     description="Running TB-Profiler for MDU",
     long_description=long_description,
     long_description_content_type="text/markdown",
