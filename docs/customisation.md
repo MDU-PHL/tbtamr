@@ -114,6 +114,7 @@ Where you have selected to use a cascade reporting structure, you will define he
 #### Variant format
 
 There may be times when you use a different catalogue, where variants are expressed in a format not consistent with WHO v2 catalogue. If this is the case - you need to ensure that the annotation format of you VCF is consistent with the pattern in your catalogue. If you _do_ decide to go down this route, you will need to supply the format of your variant, so that it can be checked with your catalogue. If these do not match `tbtAMR` will error and not report DST.
+
 | Key | Description |
 |:---:|:--- |
 |catalogue_variant| This is a list of regex expressions that reflect the values in your vcf file annotation and should be consistent with your catalogue|
