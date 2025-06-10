@@ -1,0 +1,31 @@
+site_name: tbtAMR
+site_url: https://mduphl.github.io/tbtamr/
+
+theme:
+  name: material
+  palette:
+      primary: blue grey
+  icon:
+      repo: fontawesome/brands/github-alt
+  
+features:
+    - content.code.copy
+    - content.code.select
+
+repo_url: https://github.com/mduphl/tbtamr
+repo_name: mduphl/tbtamr
+extra:
+  social:
+    - icon: fontawesome/brands/github 
+      link: https://github.com/mduphl/tbtamr
+
+markdown_extensions:
+  - attr_list
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
