@@ -1,4 +1,15 @@
 site_name: tbtAMR
+nav:
+  - Home: index.md
+  # - About: about.md
+  - Installation: installation.md
+  - Usage: usage.md
+  - Customisation: customisation.md
+  # - Examples: examples.md
+  - Cascade reporting: cascade_reporting.md
+  # - Reference: reference.md
+  # - Contributing: contributing.md
+  # - License: license.md
 site_url: https://mduphl.github.io/tbtamr/
 
 theme:
