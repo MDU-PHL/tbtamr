@@ -23,7 +23,7 @@ features:
     - content.code.copy
     - content.code.select
 
-repo_url: https://github.com/mduphl/tbtamr
+repo_url: https://github.com/mdu-phl/tbtamr
 repo_name: mdu-phl/tbtamr
 extra:
   social:
