@@ -10,7 +10,7 @@ nav:
   # - Reference: reference.md
   # - Contributing: contributing.md
   # - License: license.md
-site_url: https://mduphl.github.io/tbtamr/
+site_url: https://mdu-phl.github.io/tbtamr/
 
 theme:
   name: material
@@ -24,11 +24,11 @@ features:
     - content.code.select
 
 repo_url: https://github.com/mduphl/tbtamr
-repo_name: mduphl/tbtamr
+repo_name: mdu-phl/tbtamr
 extra:
   social:
     - icon: fontawesome/brands/github 
-      link: https://github.com/mduphl/tbtamr
+      link: https://github.com/mdu-phl/tbtamr
 
 markdown_extensions:
   - attr_list
