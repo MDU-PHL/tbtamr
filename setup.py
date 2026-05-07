@@ -52,5 +52,5 @@ setup(
         "Programming Language :: Python :: 3.10",
         "Topic :: Scientific/Engineering :: Bio-Informatics",
     ],
-    package_data={"tbtamr": ["db/*","configs/*"]}
+    package_data={"tbtamr": ["db/*","configs/*", "references/*","references/Mycobacterium_tuberculosis_h37rv/*"]}
 )

@@ -9,6 +9,8 @@
 
 tbtAMR was developed to address the need for a data-driven and flexible solution to inferring DST for _M. tuberculosis_ in a clinical and public health laboratory. tbtAMR generates genomic DST results that are suitable for reporting in a clinical setting. In order to facillitate this users are able to supply at a minimum a vcf file (annotated with snpEff) and either leverage a default mutational catalougue and criteria. Or provide their own catalogues and intepretative criteria in csv format. This means that there is no need for a developer to update logic or databases, which makes updates and therefore reverification much more straightforward and user-firendly in a CPHL setting. In addition, with additional dependencies, if required DST can also be reported from paired-end reads.
 
+tbtAMR is avaliable as a command-line tool for implementation as a stand alone bioinformatics tool or as part of a larger workflow as needed. For those who would rather not use the command-line version tbtAMR is also available as part of the CPG bioinformatics portal [here](https://portal.cpg.unimelb.edu.au/tools/tbtAMR).
+
 ![flowdiagram](img/tbtamr_flow.svg)
 
 ## What tbtAMR is NOT.

@@ -1,5 +1,5 @@
 import argparse, sys, pathlib, tempfile, os
-from distutils.command.install_egg_info import to_filename
+# from distutils.command.install_egg_info import to_filename
 from .Parse import Vcf
 from .Predict import PredictAmr
 from .Utils import check_annotate, check_mutamr, check_lineage

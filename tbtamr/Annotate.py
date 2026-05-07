@@ -37,14 +37,11 @@ def run_cmd(cmd) -> bool:
 
 def wrangle_snpeffdb():
 
-    paths = os.getenv('PATH').split(':')
-    for pth in paths:
-        d = pathlib.Path(pth.strip('bin'))
-        # p = os.environ.get('CONDA_PREFIX').strip('bin')
-        cfg = sorted(pathlib.Path(d,'share').glob('snpeff*/snpEff.config'))
-        
-        if cfg != []:
-            return cfg[0]
+    d = pathlib.Path(__file__).parent
+    cfg = sorted(pathlib.Path(d).glob('references/snpEff.config'))
+    
+    if cfg != []:
+        return cfg[0]
     logger.critical(f"It seems that there is no config setup for snpEff. Please chack your installation and try again. Exiting....")
     raise SystemExit
 
@@ -53,7 +50,7 @@ def run_snpeff(vcf_file, seq_id) -> bool:
         spc = "Mycobacterium_tuberculosis_h37rv"
         cfg = wrangle_snpeffdb()
         nme = vcf_file.strip('.vcf.gz')
-        snpeff =f"snpEff ann -dataDir . -c {cfg} -noLog -noStats {spc} {vcf_file} > {seq_id}/{seq_id}.annot.vcf"
+        snpeff =f"snpEff ann -dataDir . -c {cfg} -noLog -noStats -nodownload {spc} {vcf_file} > {seq_id}/{seq_id}.annot.vcf"
         logger.info(f"Annotating vcf file")
         run_cmd(cmd=snpeff)
         run_cmd(cmd = f"bgzip {seq_id}/{seq_id}.annot.vcf")
