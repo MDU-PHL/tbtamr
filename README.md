@@ -1,26 +1,67 @@
 [![CircleCI](https://dl.circleci.com/status-badge/img/gh/MDU-PHL/tbtamr/tree/master.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/gh/MDU-PHL/tbtamr/tree/master)
 [![Python 3.x](https://img.shields.io/badge/python-3.x-blue.svg)](https://www.python.org/)
-[![DOI](https://img.shields.io/badge/DOI-10.1016%2Fj.landig.2025.100939-blue)](https://doi.org/10.1016/j.landig.2025.100939)
-[![Bioconda](https://img.shields.io/conda/dn/bioconda/tbtamr.svg?label=Bioconda)](https://bioconda.github.io/recipes/tbtamr/README.html)
+[![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![ISO Accredited](https://img.shields.io/badge/ISO-15189_Accredited-green)](https://www.nata.com.au/)
+[![Bioconda](https://img.shields.io/conda/dn/bioconda/tbtamr.svg?label=Bioconda)](https://bioconda.github.io/recipes/tbtamr/README.html)
+[![DOI](https://img.shields.io/badge/DOI-10.1016%2Fj.landig.2025.100939-blue)](https://doi.org/10.1016/j.landig.2025.100939)
 
+# tbtAMR  
 
-# tbtAMR  <img src="https://github.com/MDU-PHL/tbtamr/blob/master/tbtamr_logo_transparent.png" width="100" height="70">
+<img src="https://github.com/MDU-PHL/tbtamr/blob/master/tbtamr_logo_transparent.png" aligb="right" width="100" height="70">
 
-`tbtAMR` implements custom logic developed at MDU to identify mutations linked to AMR mechanisms in _M. tuberculosis_ and generate reports suitable for public health in Victoria. It may also be suitable for use in research settings.
+`tbtAMR` is a software tool for
+identifibng and reporting
+mutations linked to AMR mechanisms 
+in _M.tuberculosis_ from 
+Illumina whole genome sequencing data.
 
-**`tbtAMR` is now accredited to ISO15189 standard by NATA for use in Victoria Australia.** 
+`tbtAMR` has been accredited to 
+[ISO-15189 standard](https://en.wikipedia.org/wiki/ISO_15189)
+by 
+[NATA](https://nata.com.au/)
+at the 
+[MDU-PHL](https://biomedicalsciences.unimelb.edu.au/departments/microbiology-Immunology/research/services/microbiological-diagnostic-unit-public-health-laboratory)
+in Australia.
 
-
-## tbtAMR installation
-
-In order to install `tbtAMR` conda is strongly recommended - installation instructions can be found [here](https://docs.conda.io/projects/conda/en/latest/user-guide/install/index.html). 
+## Installation
 
 ```
-conda create -n tbtamr tbtamr
+% conda create -n tbtamr -c bioconda tbtamr
+% conda activate tbtamr
+% tbtamr --version
 ```
 
+## Quick start
 
-## Usage
+```
+% tbtamr --help
+```
+
+## Documentation
 
 See our [wiki](https://github.com/MDU-PHL/tbtamr/wiki) page for further information on `tbtamr` usage.
+
+## Feedback
+
+File questions, bugs, or ideas on the 
+[Issues page](https://github.com/MDU-PHL/tbtamr/issues).
+
+## Licence
+
+[GPLv3](https://raw.githubusercontent.com/MDU-PHL/
+abritamr/master/LICENSE)
+
+## Citation
+
+Horan KA, Viberg L, Ballard SA, Globan M, 
+Wirth W, Bond K, Webb JR, Dorji T, 
+Williamson DA, Sait ML, Tay EL, 
+Denholm JT, Howden BP, Seemann T, Sherry NL. 
+_Bringing tuberculosis genomics to the clinic: development and validation of a comprehensive pipeline to predict antimicrobial susceptibility from genomic data, accredited to ISO standards._
+*Lancet Digital Health.* 
+2025 Dec;7(12):100939.
+PMID:[41436327](https://pubmed.ncbi.nlm.nih.gov/41436327/)
+
+## Maintainer
+
+[Krsity Horan](https://github.com/kristyhoran)
