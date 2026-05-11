@@ -56,7 +56,7 @@ Wirth W, Bond K, Webb JR, Dorji T,
 Williamson DA, Sait ML, Tay EL, 
 Denholm JT, Howden BP, Seemann T, Sherry NL. 
 _Bringing tuberculosis genomics to the clinic: development and validation of a comprehensive pipeline to predict antimicrobial susceptibility from genomic data, accredited to ISO standards._
-*Lancet Digital Health.* 
+**Lancet Digital Health.**
 2025 Dec;7(12):100939.
 PMID:[41436327](https://pubmed.ncbi.nlm.nih.gov/41436327/)
 
