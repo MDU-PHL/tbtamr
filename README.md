@@ -1,5 +1,8 @@
 [![CircleCI](https://dl.circleci.com/status-badge/img/gh/MDU-PHL/tbtamr/tree/master.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/gh/MDU-PHL/tbtamr/tree/master)
-[![Python 3.10](https://img.shields.io/badge/python-3.10-blue.svg)](https://www.python.org/downloads/release/python-390/)
+[![Python 3.x](https://img.shields.io/badge/python-3.x-blue.svg)](https://www.python.org/)
+[![DOI](https://img.shields.io/badge/DOI-10.1016%2Fj.landig.2025.100939-blue)](https://doi.org/10.1016/j.landig.2025.100939)
+[![Bioconda](https://img.shields.io/conda/dn/bioconda/tbtamr.svg?label=Bioconda)](https://bioconda.github.io/recipes/tbtamr/README.html)
+[![ISO Accredited](https://img.shields.io/badge/ISO-15189_Accredited-green)](https://www.nata.com.au/)
 
 
 # tbtAMR  <img src="https://github.com/MDU-PHL/tbtamr/blob/master/tbtamr_logo_transparent.png" width="100" height="70">
