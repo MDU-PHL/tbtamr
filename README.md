@@ -32,7 +32,7 @@ at the
 
 ```
 % tbtamr full -s NAME -1 R1.fq.gz -2 R2.fq.gz
-% ca btamr_results.csv
+% cat btamr_results.csv
 
 ```
 
