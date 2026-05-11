@@ -7,21 +7,18 @@
 
 # tbtAMR  
 
-<img src="https://github.com/MDU-PHL/tbtamr/blob/master/tbtamr_logo_transparent.png" aligb="right" width="100" height="70">
+<img src="https://github.com/MDU-PHL/tbtamr/blob/master/tbtamr_logo_transparent.png" align="right" width="100" height="70">
 
-`tbtAMR` is a software tool for
-identifibng and reporting
-mutations linked to AMR mechanisms 
+`tbtAMR` identifies and reports
+mutations linked to anti-microbial resistance
 in _M.tuberculosis_ from 
 Illumina whole genome sequencing data.
-
-`tbtAMR` has been accredited to 
-[ISO-15189 standard](https://en.wikipedia.org/wiki/ISO_15189)
+It has been accredited to 
+[ISO-15189 standards](https://en.wikipedia.org/wiki/ISO_15189)
 by 
 [NATA](https://nata.com.au/)
 at the 
-[MDU-PHL](https://biomedicalsciences.unimelb.edu.au/departments/microbiology-Immunology/research/services/microbiological-diagnostic-unit-public-health-laboratory)
-in Australia.
+[MDU-PHL](https://biomedicalsciences.unimelb.edu.au/departments/microbiology-Immunology/research/services/microbiological-diagnostic-unit-public-health-laboratory).
 
 ## Installation
 
@@ -34,7 +31,9 @@ in Australia.
 ## Quick start
 
 ```
-% tbtamr --help
+% tbtamr full -s NAME -1 R1.fq.gz -2 R2.fq.gz
+% ca btamr_results.csv
+
 ```
 
 ## Documentation
@@ -48,8 +47,7 @@ File questions, bugs, or ideas on the
 
 ## Licence
 
-[GPLv3](https://raw.githubusercontent.com/MDU-PHL/
-abritamr/master/LICENSE)
+[GPLv3](https://raw.githubusercontent.com/MDU-PHL/tbtmar/master/LICENSE)
 
 ## Citation
 
